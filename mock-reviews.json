@@ -1,0 +1,27 @@
+{
+  "url": "https://maps.google.com/?cid=YOUR_CID",
+  "reviews": [
+    {
+      "author_name": "John D.",
+      "profile_photo_url": "",
+      "rating": 5,
+      "relative_time_description": "2 weeks ago",
+      "text": "Amazing service and expertise! Found the perfect clubs for my game."
+    },
+    {
+      "author_name": "Sarah M.",
+      "profile_photo_url": "",
+      "rating": 5,
+      "relative_time_description": "1 month ago",
+      "text": "Professional fitting process. Improved my game significantly!"
+    },
+    {
+      "author_name": "Mike R.",
+      "profile_photo_url": "",
+      "rating": 5,
+      "relative_time_description": "3 months ago",
+      "text": "Outstanding knowledge and customer service. Highly recommend!"
+    }
+  ]
+}
+
