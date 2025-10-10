@@ -8,6 +8,7 @@
   const PLACE_ID = window.GM_PLACE_ID || null; // optionally set on page
   const GOOGLE_URL = window.GM_GOOGLE_URL || null; // link to full listing
   const endpoint = window.GM_REVIEWS_ENDPOINT || '/api/reviews';
+  const directKey = window.GM_GOOGLE_API_KEY || window.GM_DIRECT_GOOGLE_KEY || null; // dev-only
   const grid = document.getElementById('reviews-grid');
   const link = document.getElementById('reviews-google-link');
   if (!grid) return;
@@ -17,9 +18,19 @@
     return '★★★★★'.slice(0, s) + '☆☆☆☆☆'.slice(0, 5 - s);
   }
 
-  function render(reviews, listingUrl){
+  function render(reviews, listingUrl, avgRating, totalCount){
     grid.innerHTML = '';
-    const items = reviews.slice(0, 6);
+    const all = Array.isArray(reviews) ? reviews : [];
+    // Compute average if not provided
+    const computedAvg = (typeof avgRating === 'number' && !Number.isNaN(avgRating))
+      ? avgRating
+      : (all.length ? all.reduce((s,r) => s + (r.rating || 0), 0) / all.length : undefined);
+    const computedTotal = (typeof totalCount === 'number' && !Number.isNaN(totalCount)) ? totalCount : all.length;
+    // Ensure only reviews above 4 stars, newest first
+    const items = all
+      .filter(r => (r.rating || 0) >= 4)
+      .sort((a,b) => (b.time || 0) - (a.time || 0));
+
     for (const r of items){
       const card = document.createElement('div');
       card.className = 'review-card';
@@ -37,34 +48,79 @@
       grid.appendChild(card);
     }
     if (link){ link.href = listingUrl || GOOGLE_URL || '#'; }
+
+    // Also populate the top scrolling banner with 5-star snippets
+    const ticker = document.getElementById('reviews-ticker');
+    if (ticker){
+      const mkItem = (rev) => `
+        <div class="review-item">
+          <div class="stars">★★★★★</div>
+          <p>"${(rev.text || '').replace(/</g,'&lt;')}" - ${rev.author_name || 'Google User'}</p>
+        </div>`;
+      const seq = items.slice(0, 12).map(mkItem).join('');
+      // duplicate once for seamless scrolling illusion
+      ticker.innerHTML = seq + seq;
+    }
+
+    // Expose rating meta for other widgets
+    try {
+      const meta = { rating: computedAvg, total: computedTotal, url: link?.href };
+      window.GM_REVIEWS_META = meta;
+      window.dispatchEvent(new CustomEvent('gm-reviews-loaded', { detail: meta }));
+    } catch {}
+  }
+
+  async function tryBackend(){
+    const url = `${endpoint}${PLACE_ID ? `?place_id=${encodeURIComponent(PLACE_ID)}`:''}`;
+    const res = await fetch(url, { cache: 'no-store' });
+    if (!res.ok) throw new Error('backend status ' + res.status);
+    const data = await res.json();
+    if (!data || !Array.isArray(data.reviews)) throw new Error('unexpected payload');
+    render(data.reviews, data.url, data.rating, data.user_ratings_total);
+  }
+
+  async function tryDirect(){
+    if (!directKey || !PLACE_ID) throw new Error('no direct key or place id');
+    const url = new URL('https://maps.googleapis.com/maps/api/place/details/json');
+    url.searchParams.set('place_id', PLACE_ID);
+    url.searchParams.set('fields', 'url,reviews,rating,user_ratings_total');
+    url.searchParams.set('key', directKey);
+    const res = await fetch(url.toString(), { cache: 'no-store' });
+    if (!res.ok) throw new Error('google status ' + res.status);
+    const payload = await res.json();
+    if (payload.status !== 'OK') throw new Error('google payload ' + payload.status);
+    const reviews = Array.isArray(payload.result?.reviews) ? payload.result.reviews : [];
+    render(reviews, payload.result?.url, payload.result?.rating, payload.result?.user_ratings_total);
   }
 
   async function load(){
+    // Wait for optional config overrides (e.g., /aws/config.json)
+    try { if (window.GM_CONFIG_READY) await window.GM_CONFIG_READY; } catch {}
+    // Try backend > try direct key (dev) > fallback mock
     try{
-      // Try backend endpoint
-      const res = await fetch(`${endpoint}${PLACE_ID ? `?place_id=${encodeURIComponent(PLACE_ID)}`:''}`);
-      if (!res.ok) throw new Error('bad status');
-      const data = await res.json();
-      // Expected shape: { reviews: [...], url: 'https://maps.google.com/?cid=...' }
-      if (data && Array.isArray(data.reviews)) {
-        render(data.reviews, data.url);
-        return;
-      }
-      throw new Error('unexpected payload');
-    } catch (e){
-      // Fallback to mock file if present so the layout still works during dev
-      try{
+      await tryBackend();
+      return;
+    } catch {}
+    try{
+      await tryDirect();
+      return;
+    } catch {}
+    try{
+      if (!window.GM_DISABLE_MOCKS) {
         const res = await fetch('/mock-reviews.json', { cache: 'no-store' });
         if (res.ok){
           const data = await res.json();
           render(data.reviews || [], data.url);
           return;
         }
-      } catch {}
-      // If everything fails, keep existing banner content
-    }
+      }
+    } catch {}
+    // If we reach here, show nothing instead of placeholders
+    render([], window.GM_GOOGLE_URL || '#');
   }
 
   load();
+  if (typeof window !== 'undefined') {
+    window.reloadReviews = load;
+  }
 })();
-

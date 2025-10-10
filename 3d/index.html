@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>3D GolfMaxIO Prototype</title>
+    <style>
+      html, body { margin: 0; padding: 0; height: 100%; background: #111; color: #eee; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+      #app { position: fixed; inset: 0; }
+      .overlay { position: absolute; top: 12px; left: 12px; background: rgba(0,0,0,0.5); padding: 8px 12px; border-radius: 8px; font-size: 14px; }
+      a { color: #9cf; }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <div class="overlay">
+      3D prototype scene. Replace with actual game logic.
+    </div>
+
+    <!-- Example: Three.js via CDN for prototyping; vendor later if needed. -->
+    <!-- <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script> -->
+    <script>
+      // Placeholder JS to verify the 3d workspace is wired.
+      // You can replace this with an actual 3D engine init later.
+      const app = document.getElementById('app');
+      const c = document.createElement('canvas');
+      c.width = innerWidth; c.height = innerHeight; app.appendChild(c);
+      const ctx = c.getContext('2d');
+      function frame(t){
+        ctx.clearRect(0,0,c.width,c.height);
+        const r = 80 + 40*Math.sin(t/600);
+        const x = c.width/2 + 120*Math.cos(t/1000);
+        const y = c.height/2 + 80*Math.sin(t/1100);
+        const g = ctx.createRadialGradient(x,y,4,x,y,r);
+        g.addColorStop(0,'#5cf'); g.addColorStop(1,'#123');
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill();
+        requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+      addEventListener('resize', () => { c.width = innerWidth; c.height = innerHeight; });
+    </script>
+  </body>
+  </html>
+

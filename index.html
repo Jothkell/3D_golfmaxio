@@ -5,12 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GolfMax Remote Fitting | Expert Golf Club Fitting Service</title>
     <meta name="description" content="Professional remote golf club fitting service by GolfMax. Submit your swing video for expert analysis and custom club recommendations.">
+    <link rel="canonical" href="index.html">
+    <meta name="theme-color" content="#000000">
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="GolfMax Remote Fitting | Expert Golf Club Fitting Service">
+    <meta property="og:description" content="Professional remote golf club fitting service by GolfMax. Submit your swing video for expert analysis and custom club recommendations.">
+    <meta property="og:image" content="logo.png">
+    <!-- Optionally set og:url to full production URL -->
+    <!-- <meta property="og:url" content="https://YOUR_DOMAIN/index.html"> -->
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="GolfMax Remote Fitting | Expert Golf Club Fitting Service">
+    <meta name="twitter:description" content="Professional remote golf club fitting service by GolfMax. Submit your swing video for expert analysis and custom club recommendations.">
+    <meta name="twitter:image" content="logo.png">
     <link rel="stylesheet" href="styles.css?v=4">
 </head>
 <body>
+    <!-- 3D Background Sphere and Orbiting Previews -->
+    <div id="bg3d" aria-hidden="true">
+        <canvas id="bg3d-canvas"></canvas>
+    </div>
     <!-- Navigation Bar -->
     <nav class="navbar">
         <div class="nav-container">
+            <div class="nav-menu">
+                <button class="menu-trigger" aria-haspopup="true" aria-expanded="false">Menu ▾</button>
+                <div class="menu-dropdown" role="menu">
+                    <a href="#how-to" class="menu-item" role="menuitem">How to:</a>
+                    <a href="#google-reviews" class="menu-item" role="menuitem">Reviews</a>
+                    <a href="#fitter" class="menu-item" role="menuitem">Meet The Fitter</a>
+                    <a href="#form" class="menu-item" role="menuitem">Form</a>
+                </div>
+            </div>
             <div class="nav-brand">
                 <img src="logo.png?v=3" alt="GolfMax Logo" class="nav-logo">
                 <img src="ofs_free.png?v=2" alt="Free Online Fitting Service" class="nav-ofs" onerror="this.style.display='none'">
@@ -21,36 +48,8 @@
 
     <!-- Scrolling Reviews Banner -->
     <div class="reviews-banner">
-        <div class="reviews-scroll">
-            <div class="review-item">
-                <div class="stars">★★★★★</div>
-                <p>"Amazing service and expertise! Found the perfect clubs for my game." - John D.</p>
-            </div>
-            <div class="review-item">
-                <div class="stars">★★★★★</div>
-                <p>"Professional fitting process. Improved my game significantly!" - Sarah M.</p>
-            </div>
-            <div class="review-item">
-                <div class="stars">★★★★★</div>
-                <p>"Outstanding knowledge and customer service. Highly recommend!" - Mike R.</p>
-            </div>
-            <div class="review-item">
-                <div class="stars">★★★★★</div>
-                <p>"Best golf shop in Santa Barbara. Great fitting experience!" - Lisa K.</p>
-            </div>
-            <div class="review-item">
-                <div class="stars">★★★★★</div>
-                <p>"Expert fitter helped me find clubs that transformed my swing." - David L.</p>
-            </div>
-            <!-- Duplicate for seamless scrolling -->
-            <div class="review-item">
-                <div class="stars">★★★★★</div>
-                <p>"Amazing service and expertise! Found the perfect clubs for my game." - John D.</p>
-            </div>
-            <div class="review-item">
-                <div class="stars">★★★★★</div>
-                <p>"Professional fitting process. Improved my game significantly!" - Sarah M.</p>
-            </div>
+        <div class="reviews-scroll" id="reviews-ticker">
+            <!-- Populated dynamically from Google Reviews -->
         </div>
     </div>
 
@@ -59,6 +58,10 @@
         <div class="hero-content">
             <h1 class="hero-title">REMOTE FITTING</h1>
             <p class="hero-subtitle">Get professionally fitted from anywhere in the world</p>
+            <p style="margin-top:1rem;">
+                <a href="globe.html" class="globe-btn">GLOBE</a>
+                <a href="landingpage_2.html" class="globe-btn" style="margin-left:0.5rem;">landingpage_2</a>
+            </p>
             <div class="hero-stats">
                 <div class="stat-item">
                     <span class="stat-number">500+</span>
@@ -76,8 +79,26 @@
         </div>
     </section>
 
+    <!-- Side-by-Side Showcase Navigation -->
+    <section class="showcase-nav">
+        <div class="showcase-track">
+            <a class="showcase-card" href="#how-to">
+                <div class="showcase-thumb"></div>
+                <div class="showcase-title">How It Works</div>
+            </a>
+            <a class="showcase-card" href="#google-reviews">
+                <div class="showcase-thumb"></div>
+                <div class="showcase-title">Reviews</div>
+            </a>
+            <a class="showcase-card" href="#form">
+                <div class="showcase-thumb"></div>
+                <div class="showcase-title">Start Fitting</div>
+            </a>
+        </div>
+    </section>
+
     <!-- Video and How It Works Section -->
-    <section class="video-process-section">
+    <section class="video-process-section" id="how-to">
         <div class="container">
             <div class="video-process-grid">
                 <!-- Video Section -->
@@ -148,15 +169,13 @@
     <section id="google-reviews" class="reviews-live">
         <div class="container">
             <h2 class="section-title">WHAT CLIENTS SAY</h2>
+            <p class="reviews-attrib">Powered by Google • <a id="reviews-google-link" href="#" target="_blank" rel="noopener" class="google-link">See all reviews on Google</a></p>
             <div id="reviews-grid" class="reviews-grid" aria-live="polite"></div>
-            <div class="reviews-cta">
-                <a id="reviews-google-link" href="#" target="_blank" rel="noopener" class="google-link">See all reviews on Google</a>
-            </div>
         </div>
     </section>
 
     <!-- Fitter Bio Section -->
-    <section class="fitter-bio">
+    <section class="fitter-bio" id="fitter">
         <div class="container">
             <div class="bio-content">
                 <div class="bio-text">
@@ -183,7 +202,7 @@
     </section>
 
     <!-- Remote Fitting Form -->
-    <section class="fitting-form-section">
+    <section class="fitting-form-section" id="form">
         <div class="container">
             <div class="form-header">
                 <h2 class="section-title">START YOUR REMOTE FITTING</h2>
@@ -251,5 +270,9 @@
     </footer>
 </body>
 <script src="config.js?v=1"></script>
+<!-- Three.js for 3D sphere background -->
+<script src="vendor/three.min.js"></script>
+<script src="sphere.js?v=1"></script>
 <script src="reviews.js?v=1"></script>
+<script src="editmode.js?v=1"></script>
 </html>

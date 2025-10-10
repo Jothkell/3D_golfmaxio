@@ -40,6 +40,19 @@ A professional landing page for GolfMax's remote golf club fitting service, desi
    - Ensure all image files are properly uploaded
    - Test responsiveness on different devices
 
+### Production checklist (quick wins)
+- SEO: Open Graph + Twitter meta added to `index.html` and `landingpage_2.html`.
+- Robots: `robots.txt` created with a pointer to `/sitemap.xml`.
+- Sitemap: `sitemap.xml` added — replace `https://YOUR_DOMAIN` with your production origin before going live.
+- 404: `404.html` added for nicer not-found handling on static hosts.
+- Reviews API: Cloudflare Worker supports `ALLOWED_ORIGINS` (CORS). Set via Wrangler.
+
+### Configure sitemap domain
+Search/replace `https://YOUR_DOMAIN` in `sitemap.xml` with your final site URL (e.g., `https://remote.thegolfmax.com`).
+
+### Bind Worker to your site (Cloudflare Pages)
+- Route `/api/reviews` on your Pages project to the Worker so the frontend fetches same-origin.
+
 ## Customization
 
 ### Colors

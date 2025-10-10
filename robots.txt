@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+
+# Update the absolute URL inside sitemap.xml before going live
+Sitemap: /sitemap.xml
+

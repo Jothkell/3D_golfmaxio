@@ -2,8 +2,14 @@ name = "golfmax-reviews"
 main = "worker.js"
 compatibility_date = "2024-10-01"
 
+# Deploy to your zone routes (top-level, not under [vars])
+routes = [
+  { pattern = "freegolffitting.com/api/reviews*", zone_name = "freegolffitting.com" },
+  { pattern = "www.freegolffitting.com/api/reviews*", zone_name = "freegolffitting.com" }
+]
+
 [vars]
-# PLACE_ID is set via `wrangler vars set PLACE_ID` (do not hardcode here)
-
+# PLACE_ID can be set later via `wrangler vars set PLACE_ID` or added here
 # GOOGLE_API_KEY is a secret set via `wrangler secret put GOOGLE_API_KEY`
-
+ALLOWED_ORIGINS = "https://freegolffitting.com,https://www.freegolffitting.com,https://freegolffitting.pages.dev"
+PLACE_ID = "ChIJO8L3QtwU6YARnGKftpsMyfo"

@@ -1,0 +1,70 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: GolfMax Reviews API (Lambda + HTTP API)
+
+Parameters:
+  GoogleApiKey:
+    Type: String
+    NoEcho: true
+    Description: Google Places API Key (kept server-side)
+  PlaceId:
+    Type: String
+    Default: ''
+    Description: Optional default Google Place ID; can be overridden via ?place_id=
+  AllowedOrigin:
+    Type: String
+    Default: '*'
+    Description: CORS allowed origin (e.g., http://localhost:8000 or https://your.domain)
+
+Globals:
+  Function:
+    Runtime: nodejs20.x
+    Timeout: 5
+    MemorySize: 256
+    Tracing: PassThrough
+
+Resources:
+  HttpApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      CorsConfiguration:
+        AllowOrigins:
+          - !Ref AllowedOrigin
+        AllowMethods:
+          - GET
+          - OPTIONS
+        AllowHeaders:
+          - Content-Type
+
+  ReviewsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: golfmax-reviews
+      Handler: index.handler
+      CodeUri: ../lambda/reviews
+      Environment:
+        Variables:
+          GOOGLE_API_KEY: !Ref GoogleApiKey
+          PLACE_ID: !Ref PlaceId
+          ALLOWED_ORIGIN: !Ref AllowedOrigin
+      Events:
+        Reviews:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /api/reviews
+            Method: GET
+
+  ReviewsLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /aws/lambda/golfmax-reviews
+      RetentionInDays: 14
+
+Outputs:
+  ApiUrl:
+    Description: Base URL for the HTTP API
+    Value: !Sub 'https://${HttpApi}.execute-api.${AWS::Region}.amazonaws.com'
+  ReviewsEndpoint:
+    Description: Full Reviews endpoint
+    Value: !Sub 'https://${HttpApi}.execute-api.${AWS::Region}.amazonaws.com/api/reviews'
