@@ -11,7 +11,8 @@ This document captures the current state, live links, and the exact next actions
   - `https://www.freegolffitting.com/api/reviews*`
   - Note: DNS for the domain is not live yet, so those URLs won’t resolve.
 - Cloudflare Pages Function added for previews: `functions/api/reviews.js`.
-- Frontend can read runtime config from `/aws/config.json` if present.
+- Frontend reads runtime config from `/aws/config.json` when present.
+- Static assets published to `s3://freegolffitting-site` (`us-west-2`) with website endpoint: `http://freegolffitting-site.s3-website-us-west-2.amazonaws.com/`.
 
 ## Key Paths
 - Frontend entry: `index.html`, alternate LP: `landingpage_2.html`.
@@ -25,7 +26,7 @@ This document captures the current state, live links, and the exact next actions
 - Build/deploy helpers:
   - `scripts/build_public.sh` → assembles `public/` with optional `/aws/config.json`.
   - `scripts/aws_sync_s3.sh s3://YOUR_BUCKET --region us-east-1` → syncs `public/` to S3.
-- Optional runtime config example: `aws/config.sample.json` (copy to `aws/config.json`).
+- Runtime config shipped at `aws/config.json` (update `REVIEWS_ENDPOINT` once the AWS API is live); example template remains at `aws/config.sample.json`.
 
 ## Secrets & Config (where they live)
 - Google Places API key:
@@ -38,9 +39,9 @@ This document captures the current state, live links, and the exact next actions
 1) Cloudflare:
    - Domain `freegolffitting.com` must be onboarded and proxied (orange cloud) so the Worker routes activate.
 2) AWS (recommended hosting target + API):
-   - Configure AWS CLI credentials on the machine.
    - Deploy the SAM Reviews API and capture the output URL.
-   - Create an S3 bucket and (optionally) a CloudFront distribution for the site.
+   - Attach CloudFront + custom domain in front of `s3://freegolffitting-site`.
+   - (Future 3D pipeline) Create `video-input`, `model-output`, and `artifacts` buckets in `us-west-2`.
 
 ## Exact Next Actions
 
@@ -60,7 +61,7 @@ Outputs:
 - Copy `ReviewsEndpoint` (final URL is `https://<api-id>.execute-api.<region>.amazonaws.com/api/reviews`).
 
 ### B) Point the site to the AWS API (no rebuild required)
-Create `aws/config.json` (copy from `aws/config.sample.json`) and set:
+Update `aws/config.json` with the deployed endpoint:
 ```
 {
   "REVIEWS_ENDPOINT": "<ReviewsEndpoint>",
@@ -69,7 +70,7 @@ Create `aws/config.json` (copy from `aws/config.sample.json`) and set:
 ```
 Then deploy static files to S3:
 ```
-scripts/aws_sync_s3.sh s3://YOUR-SITE-BUCKET --region us-east-1 --profile default
+scripts/aws_sync_s3.sh s3://freegolffitting-site --region us-west-2
 ```
 Open the S3 website endpoint (or CloudFront if configured) and verify reviews render.
 
@@ -87,7 +88,7 @@ Open the S3 website endpoint (or CloudFront if configured) and verify reviews re
 - Local dev: `python3 -m http.server 8080` → http://localhost:8080 → `WHAT CLIENTS SAY` shows cards once API is reachable.
 - Pages preview: `*.freegolffitting.pages.dev/landingpage_2.html` uses the Pages Function `/api/reviews`.
 - Production (Cloudflare): Once DNS is live, `/api/reviews` is served by the Worker.
-- Production (AWS): If hosting on S3/CloudFront, the site will read `REVIEWS_ENDPOINT` from `/aws/config.json` and call API Gateway.
+- Production (AWS): S3 website currently lives at `http://freegolffitting-site.s3-website-us-west-2.amazonaws.com/`. After CloudFront is in place, confirm the site reads `REVIEWS_ENDPOINT` from `/aws/config.json` and calls API Gateway.
 
 ## Contact Points for the Next Engineer
 - If Cloudflare Worker returns errors, run `npx wrangler tail golfmax-reviews` in `cloudflare/`.
