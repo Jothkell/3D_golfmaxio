@@ -14,6 +14,7 @@ This document captures the current state, live links, and the exact next actions
 - Frontend reads runtime config from `/aws/config.json` when present.
 - Static assets published to `s3://freegolffitting-site` (`us-west-2`) with website endpoint: `http://freegolffitting-site.s3-website-us-west-2.amazonaws.com/`.
 - CloudFront distribution `E3O6C05H4ST9HA` (domain `d268b7nk0cktd7.cloudfront.net`) fronts the bucket; ACM cert `arn:aws:acm:us-east-1:327512371169:certificate/fa78d944-51e7-4b29-a16c-5d3ff0688647` is attached.
+- AWS SAM stack `golfmax-reviews` deployed in `us-west-2`; API Gateway endpoint `https://6bqg4174x8.execute-api.us-west-2.amazonaws.com/api/reviews` feeds the site via `/aws/config.json`.
 
 ## Key Paths
 - Frontend entry: `index.html`, alternate LP: `landingpage_2.html`.
@@ -40,7 +41,7 @@ This document captures the current state, live links, and the exact next actions
 1) Cloudflare:
    - Domain `freegolffitting.com` must be onboarded and proxied (orange cloud) so the Worker routes activate.
 2) AWS (recommended hosting target + API):
-   - Deploy the SAM Reviews API and capture the output URL.
+- Deploy the SAM Reviews API and capture the output URL. ✅ (`https://6bqg4174x8.execute-api.us-west-2.amazonaws.com/api/reviews`)
    - Attach CloudFront + custom domain in front of `s3://freegolffitting-site`.
    - (Future 3D pipeline) Create `video-input`, `model-output`, and `artifacts` buckets in `us-west-2`.
 
@@ -62,18 +63,14 @@ Outputs:
 - Copy `ReviewsEndpoint` (final URL is `https://<api-id>.execute-api.<region>.amazonaws.com/api/reviews`).
 
 ### B) Point the site to the AWS API (no rebuild required)
-Update `aws/config.json` with the deployed endpoint:
+`aws/config.json` now points to the deployed endpoint:
 ```
 {
   "REVIEWS_ENDPOINT": "<ReviewsEndpoint>",
   "PLACE_ID": "ChIJO8L3QtwU6YARnGKftpsMyfo"
 }
 ```
-Then deploy static files to S3:
-```
-scripts/aws_sync_s3.sh s3://freegolffitting-site --region us-west-2
-```
-Open the S3 website endpoint (or CloudFront if configured) and verify reviews render.
+Static site is synced to S3/CloudFront. If you change the endpoint or config, rebuild with `scripts/build_public.sh` and `scripts/aws_sync_s3.sh s3://freegolffitting-site --region us-west-2`.
 
 ### C) Finish CloudFront + custom domain
 - CloudFront distribution `d268b7nk0cktd7.cloudfront.net` is provisioning — wait for status `Deployed`.
@@ -90,7 +87,7 @@ Open the S3 website endpoint (or CloudFront if configured) and verify reviews re
 - Local dev: `python3 -m http.server 8080` → http://localhost:8080 → `WHAT CLIENTS SAY` shows cards once API is reachable.
 - Pages preview: `*.freegolffitting.pages.dev/landingpage_2.html` uses the Pages Function `/api/reviews`.
 - Production (Cloudflare): Once DNS is live, `/api/reviews` is served by the Worker.
-- Production (AWS): CloudFront domain `https://d268b7nk0cktd7.cloudfront.net` currently serves the site (S3 origin). After DNS cuts over, confirm the site reads `REVIEWS_ENDPOINT` from `/aws/config.json` and calls API Gateway.
+- Production (AWS): CloudFront domain `https://d268b7nk0cktd7.cloudfront.net` currently serves the site (S3 origin). After DNS cuts over, confirm the site reads `REVIEWS_ENDPOINT` from `/aws/config.json` and calls API Gateway. Current Google key responds with `REQUEST_DENIED`; lift the key restrictions or supply a server-side key so Lambda succeeds.
 
 ## Contact Points for the Next Engineer
 - If Cloudflare Worker returns errors, run `npx wrangler tail golfmax-reviews` in `cloudflare/`.

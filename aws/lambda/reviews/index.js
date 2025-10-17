@@ -9,7 +9,7 @@ const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || '*';
 const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
 const cache = globalThis.__GM_REVIEWS_CACHE__ || (globalThis.__GM_REVIEWS_CACHE__ = {});
 
-export const handler = async (event) => {
+const handler = async (event) => {
   try {
     const apiKey = process.env.GOOGLE_API_KEY;
     if (!apiKey) throw new Error('Missing GOOGLE_API_KEY');
@@ -95,3 +95,5 @@ export const handler = async (event) => {
     };
   }
 };
+
+exports.handler = handler;
