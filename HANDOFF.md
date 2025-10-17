@@ -13,6 +13,7 @@ This document captures the current state, live links, and the exact next actions
 - Cloudflare Pages Function added for previews: `functions/api/reviews.js`.
 - Frontend reads runtime config from `/aws/config.json` when present.
 - Static assets published to `s3://freegolffitting-site` (`us-west-2`) with website endpoint: `http://freegolffitting-site.s3-website-us-west-2.amazonaws.com/`.
+- CloudFront distribution `E3O6C05H4ST9HA` (domain `d268b7nk0cktd7.cloudfront.net`) fronts the bucket; ACM cert `arn:aws:acm:us-east-1:327512371169:certificate/fa78d944-51e7-4b29-a16c-5d3ff0688647` is attached.
 
 ## Key Paths
 - Frontend entry: `index.html`, alternate LP: `landingpage_2.html`.
@@ -74,10 +75,11 @@ scripts/aws_sync_s3.sh s3://freegolffitting-site --region us-west-2
 ```
 Open the S3 website endpoint (or CloudFront if configured) and verify reviews render.
 
-### C) (Optional) Add CloudFront + HTTPS + custom domain
-- Request ACM cert in `us-east-1` for `freegolffitting.com` and `www.freegolffitting.com`.
-- Deploy: see `aws/cloudfront-site.yaml` and instructions in `aws/README.md`.
-- Point Route 53 alias records to the distribution domain.
+### C) Finish CloudFront + custom domain
+- CloudFront distribution `d268b7nk0cktd7.cloudfront.net` is provisioning — wait for status `Deployed`.
+- In Cloudflare DNS, set `freegolffitting.com` and `www.freegolffitting.com` CNAME records to `d268b7nk0cktd7.cloudfront.net` (DNS only, gray cloud).
+- Once DNS propagates, hit `https://freegolffitting.com` and confirm the site serves over HTTPS through CloudFront.
+- Optional: lock S3 bucket to CloudFront-only access later (convert to Origin Access Control + tighten bucket policy).
 
 ## Behavior Notes
 - Reviews filter: both backend (Worker/Function/Lambda) and frontend show only rating >= 4.
@@ -88,7 +90,7 @@ Open the S3 website endpoint (or CloudFront if configured) and verify reviews re
 - Local dev: `python3 -m http.server 8080` → http://localhost:8080 → `WHAT CLIENTS SAY` shows cards once API is reachable.
 - Pages preview: `*.freegolffitting.pages.dev/landingpage_2.html` uses the Pages Function `/api/reviews`.
 - Production (Cloudflare): Once DNS is live, `/api/reviews` is served by the Worker.
-- Production (AWS): S3 website currently lives at `http://freegolffitting-site.s3-website-us-west-2.amazonaws.com/`. After CloudFront is in place, confirm the site reads `REVIEWS_ENDPOINT` from `/aws/config.json` and calls API Gateway.
+- Production (AWS): CloudFront domain `https://d268b7nk0cktd7.cloudfront.net` currently serves the site (S3 origin). After DNS cuts over, confirm the site reads `REVIEWS_ENDPOINT` from `/aws/config.json` and calls API Gateway.
 
 ## Contact Points for the Next Engineer
 - If Cloudflare Worker returns errors, run `npx wrangler tail golfmax-reviews` in `cloudflare/`.
