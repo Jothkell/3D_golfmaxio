@@ -15,6 +15,7 @@ This document captures the current state, live links, and the exact next actions
 - Static assets published to `s3://freegolffitting-site` (`us-west-2`) with website endpoint: `http://freegolffitting-site.s3-website-us-west-2.amazonaws.com/`.
 - CloudFront distribution `E3O6C05H4ST9HA` (domain `d268b7nk0cktd7.cloudfront.net`) fronts the bucket; ACM cert `arn:aws:acm:us-east-1:327512371169:certificate/fa78d944-51e7-4b29-a16c-5d3ff0688647` is attached.
 - AWS SAM stack `golfmax-reviews` deployed in `us-west-2`; API Gateway endpoint `https://6bqg4174x8.execute-api.us-west-2.amazonaws.com/api/reviews` feeds the site via `/aws/config.json`.
+- Public-facing pages (`index.html`, `landingpage_2.html`, `globe.html`, `existing_site.html`, `reference_site.html`, `3d/index.html`) now render a "Coming Soon" placeholder while the experience is under construction.
 
 ## Key Paths
 - Frontend entry: `index.html`, alternate LP: `landingpage_2.html`.
@@ -70,7 +71,7 @@ Outputs:
   "PLACE_ID": "ChIJO8L3QtwU6YARnGKftpsMyfo"
 }
 ```
-Static site is synced to S3/CloudFront. If you change the endpoint or config, rebuild with `scripts/build_public.sh` and `scripts/aws_sync_s3.sh s3://freegolffitting-site --region us-west-2`.
+Static site is synced to S3/CloudFront. If you change the endpoint or config, rebuild with `scripts/build_public.sh` and `scripts/aws_sync_s3.sh s3://freegolffitting-site --region us-west-2`. Placeholder content keeps visitors away from unfinished flows; remove the block once launch-ready.
 
 ### C) Finish CloudFront + custom domain
 - CloudFront distribution `d268b7nk0cktd7.cloudfront.net` is provisioning — wait for status `Deployed`.
@@ -88,6 +89,7 @@ Static site is synced to S3/CloudFront. If you change the endpoint or config, re
 - Pages preview: `*.freegolffitting.pages.dev/landingpage_2.html` uses the Pages Function `/api/reviews`.
 - Production (Cloudflare): Once DNS is live, `/api/reviews` is served by the Worker.
 - Production (AWS): CloudFront domain `https://d268b7nk0cktd7.cloudfront.net` currently serves the site (S3 origin). After DNS cuts over, confirm the site reads `REVIEWS_ENDPOINT` from `/aws/config.json` and calls API Gateway. Current Google key responds with `REQUEST_DENIED`; lift the key restrictions or supply a server-side key so Lambda succeeds.
+- SEO holding pattern: `robots.txt` disallows crawling until launch; `sitemap.xml` lists only `index.html`.
 
 ## Contact Points for the Next Engineer
 - If Cloudflare Worker returns errors, run `npx wrangler tail golfmax-reviews` in `cloudflare/`.

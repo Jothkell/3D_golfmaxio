@@ -1,44 +1,30 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>3D GolfMaxIO Prototype</title>
-    <style>
-      html, body { margin: 0; padding: 0; height: 100%; background: #111; color: #eee; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
-      #app { position: fixed; inset: 0; }
-      .overlay { position: absolute; top: 12px; left: 12px; background: rgba(0,0,0,0.5); padding: 8px 12px; border-radius: 8px; font-size: 14px; }
-      a { color: #9cf; }
-    </style>
-  </head>
-  <body>
-    <div id="app"></div>
-    <div class="overlay">
-      3D prototype scene. Replace with actual game logic.
-    </div>
-
-    <!-- Example: Three.js via CDN for prototyping; vendor later if needed. -->
-    <!-- <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script> -->
-    <script>
-      // Placeholder JS to verify the 3d workspace is wired.
-      // You can replace this with an actual 3D engine init later.
-      const app = document.getElementById('app');
-      const c = document.createElement('canvas');
-      c.width = innerWidth; c.height = innerHeight; app.appendChild(c);
-      const ctx = c.getContext('2d');
-      function frame(t){
-        ctx.clearRect(0,0,c.width,c.height);
-        const r = 80 + 40*Math.sin(t/600);
-        const x = c.width/2 + 120*Math.cos(t/1000);
-        const y = c.height/2 + 80*Math.sin(t/1100);
-        const g = ctx.createRadialGradient(x,y,4,x,y,r);
-        g.addColorStop(0,'#5cf'); g.addColorStop(1,'#123');
-        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill();
-        requestAnimationFrame(frame);
-      }
-      requestAnimationFrame(frame);
-      addEventListener('resize', () => { c.width = innerWidth; c.height = innerHeight; });
-    </script>
-  </body>
-  </html>
-
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GolfMax 3D Prototype | Coming Soon</title>
+  <meta name="robots" content="noindex">
+  <link rel="stylesheet" href="../styles.css?v=5">
+  <style>
+    body{margin:0;min-height:100vh;background:#0a0a0a url('../background.png') repeat;color:#f6f7f9;font-family:'Work Sans',Arial,sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2.5rem}
+    .card{max-width:600px;background:rgba(0,0,0,0.65);border:1px solid rgba(255,255,255,0.08);border-radius:24px;padding:3rem 2.5rem;box-shadow:0 25px 60px rgba(0,0,0,0.45)}
+    .card h1{margin:0 0 1.25rem;font-size:clamp(2.5rem,5vw,4rem);letter-spacing:0.12em}
+    .card p{margin:0 0 1rem;color:rgba(246,247,249,0.85)}
+    .card a{display:inline-block;margin-top:1.5rem;padding:0.85rem 1.8rem;background:#f6f7f9;color:#0a0a0a;text-decoration:none;font-weight:700;border:2px solid #f6f7f9;transition:all .3s}
+    .card a:hover{background:transparent;color:#f6f7f9}
+    footer{margin-top:2rem;color:rgba(246,247,249,0.65)}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <img src="../logo.png?v=3" alt="GolfMax Logo" style="height:78px;margin-bottom:1.4rem;">
+    <h1>COMING&nbsp;SOON</h1>
+    <p>The 3D prototype is being refined alongside the new GolfMax remote fitting platform.</p>
+    <p>Please check back at launch for the full interactive experience.</p>
+    <a href="https://www.thegolfmax.com" target="_blank" rel="noopener">Visit GolfMax.com</a>
+  </div>
+  <footer>© <span id="year"></span> GolfMax. All rights reserved.</footer>
+  <script>document.getElementById('year').textContent=new Date().getFullYear();</script>
+</body>
+</html>

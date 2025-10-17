@@ -1,6 +1,4 @@
 User-agent: *
-Allow: /
+Disallow: /
 
-# Update the absolute URL inside sitemap.xml before going live
-Sitemap: /sitemap.xml
-
+# Update robots.txt and sitemap.xml when the production experience launches.

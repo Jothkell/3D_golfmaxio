@@ -3,25 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Globe</title>
-  <link rel="stylesheet" href="styles.css?v=4">
+  <title>GolfMax Remote Fitting | Coming Soon</title>
+  <meta name="robots" content="noindex">
+  <link rel="stylesheet" href="styles.css?v=5">
   <style>
-    html, body { height: 100%; }
-    body { padding-top: 0; }
-    .globe-overlay { position: fixed; top: 12px; left: 12px; z-index: 2; }
-    .globe-overlay a { display:inline-block; background:#fff; color:#000; padding:8px 12px; border:1px solid #ddd; text-decoration:none; font-weight:600; border-radius:8px; }
+    body{margin:0;min-height:100vh;background:#0a0a0a url('./background.png') repeat;color:#f6f7f9;font-family:'Work Sans',Arial,sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem}
+    .logo-wrap{display:flex;gap:16px;align-items:center;margin-bottom:2rem}
+    .logo-wrap img{height:80px}
+    .panel{max-width:620px;background:rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.08);border-radius:24px;padding:3rem 2.5rem;box-shadow:0 25px 60px rgba(0,0,0,0.45)}
+    .panel h1{margin:0 0 1.25rem;font-size:clamp(2.5rem,5vw,4rem);letter-spacing:0.12em}
+    .panel p{margin:0 0 1rem;color:rgba(246,247,249,0.85)}
+    .panel a{display:inline-block;margin-top:1.5rem;padding:0.85rem 1.8rem;background:#f6f7f9;color:#0a0a0a;text-decoration:none;font-weight:700;border:2px solid #f6f7f9;transition:all .3s}
+    .panel a:hover{background:transparent;color:#f6f7f9}
+    footer{margin-top:2rem;color:rgba(246,247,249,0.65)}
   </style>
-  <script defer src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
-  <script defer src="sphere.js?v=1"></script>
-  <script defer src="config.js?v=1"></script>
-  <script defer src="editmode.js?v=1"></script>
 </head>
 <body>
-  <div id="bg3d" aria-hidden="true">
-    <canvas id="bg3d-canvas"></canvas>
+  <div class="logo-wrap">
+    <img src="logo.png?v=3" alt="GolfMax Logo">
+    <img src="ofs_free.png?v=2" alt="Free Online Fitting Service" onerror="this.style.display='none'">
   </div>
-  <div class="globe-overlay">
-    <a href="index.html">Back</a>
+  <div class="panel">
+    <h1>COMING&nbsp;SOON</h1>
+    <p>This globe experience is part of the upcoming GolfMax remote fitting launch.</p>
+    <p>We’re refining the interactive elements and will share more soon.</p>
+    <a href="https://www.thegolfmax.com" target="_blank" rel="noopener">Visit GolfMax.com</a>
   </div>
+  <footer>© <span id="year"></span> GolfMax. All rights reserved.</footer>
+  <script>document.getElementById('year').textContent=new Date().getFullYear();</script>
 </body>
 </html>
