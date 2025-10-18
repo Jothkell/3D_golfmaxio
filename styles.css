@@ -932,7 +932,7 @@ footer {
 #bg3d {
     position: fixed;
     inset: 0;
-    z-index: 0; /* behind content */
+    z-index: -1; /* ensure background stays behind overlays */
     overflow: hidden;
     pointer-events: none; /* allow clicks to pass except previews */
 }
