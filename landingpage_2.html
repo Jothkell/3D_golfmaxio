@@ -7,9 +7,9 @@
     <meta name="robots" content="noindex">
     <link rel="stylesheet" href="styles.css?v=5">
     <style>
-        body{min-height:100vh;margin:0;background:#0a0a0a;color:#f6f7f9;font-family:'Work Sans',Arial,sans-serif;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;background-image:url('./background.png');padding-top:80px}
-        .coming-wrapper{flex:1;display:flex;align-items:center;justify-content:center;padding:2rem}
-        .coming-card{max-width:640px;background:rgba(0,0,0,0.65);border:1px solid rgba(255,255,255,0.08);border-radius:24px;padding:3rem 2rem;text-align:center;box-shadow:0 25px 60px rgba(0,0,0,0.45)}
+        body{min-height:100vh;margin:0;background:#0a0a0a;color:#f6f7f9;font-family:'Work Sans',Arial,sans-serif;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;background-image:url('./background.png');padding-top:80px;position:relative;overflow:hidden}
+        .coming-wrapper{flex:1;display:flex;align-items:center;justify-content:center;padding:2rem;position:relative;z-index:1}
+        .coming-card{max-width:640px;background:rgba(0,0,0,0.65);border:1px solid rgba(255,255,255,0.08);border-radius:24px;padding:3rem 2rem;text-align:center;box-shadow:0 25px 60px rgba(0,0,0,0.45);position:relative;z-index:1}
         .coming-card h1{font-size:clamp(2.5rem,5vw,4rem);letter-spacing:0.12em;margin-bottom:1.25rem}
         .coming-card p{margin-bottom:1rem;color:rgba(246,247,249,0.85)}
         .coming-card a{display:inline-block;margin-top:1.5rem;padding:0.85rem 1.8rem;background:#f6f7f9;color:#0a0a0a;text-decoration:none;font-weight:700;border:2px solid #f6f7f9;transition:all .3s ease}
@@ -20,7 +20,10 @@
     </style>
 </head>
 <body>
-    <div class="nav-brand">
+    <div id="bg3d" aria-hidden="true">
+        <canvas id="bg3d-canvas"></canvas>
+    </div>
+    <div class="nav-brand" style="position:relative;z-index:1;">
         <img src="logo.png?v=3" alt="GolfMax Logo" class="nav-logo" style="height:72px;">
         <img src="ofs_free.png?v=2" alt="Free Online Fitting Service" class="nav-ofs" style="height:72px;" onerror="this.style.display='none'">
     </div>
@@ -32,9 +35,11 @@
             <a href="https://www.thegolfmax.com" target="_blank" rel="noopener">Visit GolfMax.com</a>
         </div>
     </div>
-    <footer>
+    <footer style="position:relative;z-index:1;">
         <p>© <span id="year"></span> GolfMax. All rights reserved.</p>
     </footer>
+    <script src="vendor/three.min.js"></script>
+    <script src="sphere.js"></script>
     <script>document.getElementById('year').textContent=new Date().getFullYear();</script>
 </body>
 </html>
