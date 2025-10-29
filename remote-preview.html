@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GolfMax Remote Fitting | Custom Clubs From Anywhere</title>
+    <meta name="description" content="Start a GolfMax remote fitting and receive tour-level club recommendations without leaving home. Upload a swing video, tell us your goals, and our master fitter delivers a full spec blueprint.">
+    <link rel="canonical" href="index.html">
+    <meta name="theme-color" content="#000000">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="GolfMax Remote Fitting | Custom Clubs From Anywhere">
+    <meta property="og:description" content="Upload a swing video and GolfMax delivers a custom remote fitting with detailed club specs, build notes, and upgrade recommendations.">
+    <meta property="og:image" content="logo.png">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="GolfMax Remote Fitting | Custom Clubs From Anywhere">
+    <meta name="twitter:description" content="Tour-grade remote fittings tailored to your swing. Submit your video today and get a full blueprint from GolfMax.">
+    <meta name="twitter:image" content="logo.png">
+
+    <link rel="stylesheet" href="styles.css?v=6">
+</head>
+<body>
+    <!-- 3D Background Sphere -->
+    <div id="bg3d" aria-hidden="true">
+        <canvas id="bg3d-canvas"></canvas>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-menu">
+                <button class="menu-trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="nav-menu-dropdown">Explore ▾</button>
+                <div class="menu-dropdown" id="nav-menu-dropdown" role="menu">
+                    <a href="#process" class="menu-item" role="menuitem">Process</a>
+                    <a href="#google-reviews" class="menu-item" role="menuitem">Reviews</a>
+                    <a href="#team" class="menu-item" role="menuitem">Team</a>
+                    <a href="#start" class="menu-item" role="menuitem">Start Fitting</a>
+                </div>
+            </div>
+            <div class="nav-brand">
+                <a href="index.html" class="nav-logo-link">
+                    <img src="logo.png?v=3" alt="GolfMax Logo" class="nav-logo">
+                </a>
+                <a href="landingpage_2.html" class="nav-ofs-link">
+                    <img src="ofs_free.png?v=2" alt="Free Online Fitting Service" class="nav-ofs" onerror="this.style.display='none'">
+                </a>
+            </div>
+            <a href="https://www.thegolfmax.com" class="shop-btn" target="_blank" rel="noopener">Shop GolfMax</a>
+        </div>
+    </nav>
+
+    <!-- Reviews Banner -->
+    <div class="reviews-banner">
+        <div class="reviews-scroll" id="reviews-ticker" aria-live="polite">
+            <!-- Populated dynamically -->
+        </div>
+    </div>
+
+    <!-- Hero -->
+    <section class="hero-section" id="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">Tour-Level Fitting, Done Remotely</h1>
+            <p class="hero-subtitle">Send GolfMax a swing, and we send back the build sheet.</p>
+            <p class="hero-body">Upload a single down-the-line swing, share the ball flight you need, and master fitter Alex Bollag will return a complete club blueprint—shaft, loft, lie, swing weight, and gapping—within one business day.</p>
+            <div class="hero-proof" id="reviews-meta" hidden>
+                <div class="hero-rating" aria-live="polite">
+                    <span class="hero-rating-stars" aria-hidden="true">★★★★★</span>
+                    <span class="hero-rating-score" data-rating>5.0</span>
+                </div>
+                <p class="hero-rating-count" data-count>Based on verified Google fittings</p>
+                <a class="hero-rating-link" data-meta-link href="#google-reviews">Read Google reviews</a>
+            </div>
+            <div class="hero-actions">
+                <a href="#start" class="primary-btn">Start Your Remote Fitting</a>
+                <a href="#process" class="secondary-link">See how it works</a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <span class="stat-number">24 hr</span>
+                    <span class="stat-label">Avg. turnaround</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">600+</span>
+                    <span class="stat-label">Remote fittings delivered</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">98%</span>
+                    <span class="stat-label">Players keeping the fit in play</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Navigation -->
+    <section class="showcase-nav">
+        <div class="showcase-track">
+            <a class="showcase-card" href="#process">
+                <div class="showcase-thumb"></div>
+                <div class="showcase-title">See the process</div>
+            </a>
+            <a class="showcase-card" href="#google-reviews">
+                <div class="showcase-thumb"></div>
+                <div class="showcase-title">Read the reviews</div>
+            </a>
+            <a class="showcase-card" href="#start">
+                <div class="showcase-thumb"></div>
+                <div class="showcase-title">Start your fitting</div>
+            </a>
+        </div>
+    </section>
+
+    <!-- Video + Process -->
+    <section class="video-process-section" id="process">
+        <div class="container">
+            <div class="video-process-grid">
+                <div class="video-section">
+                    <div class="video-content">
+                        <h2 class="section-title">See the Remote Workflow</h2>
+                        <p class="video-description">This walkthrough mirrors the studio session: we audit your current ball flight, pair it with launch data, and pressure-test every recommendation before a single club is built.</p>
+                        <div class="video-wrapper">
+                            <iframe
+                                src="https://www.youtube.com/embed/GAMxQAF4Pxk"
+                                title="GolfMax Remote Fitting Breakdown"
+                                frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                allowfullscreen>
+                            </iframe>
+                        </div>
+                        <div class="video-highlights">
+                            <div class="highlight-item">
+                                <span class="highlight-icon">🛰️</span>
+                                <span>Launch monitor data paired with on-course context</span>
+                            </div>
+                            <div class="highlight-item">
+                                <span class="highlight-icon">🧪</span>
+                                <span>Blueprint covers shaft profile, tipping, swing weight, and gapping</span>
+                            </div>
+                            <div class="highlight-item">
+                                <span class="highlight-icon">📦</span>
+                                <span>Build sheet ships ready for GolfMax or your preferred builder</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="how-it-works">
+                    <h2 class="section-title">How the Remote Fitting Works</h2>
+                    <div class="steps-grid">
+                        <div class="step-card">
+                            <div class="step-number">1</div>
+                            <h3>Upload Your Swing &amp; Specs</h3>
+                            <p>Share a down-the-line swing, recent launch monitor numbers, and where the current build falls short.</p>
+                        </div>
+                        <div class="step-card">
+                            <div class="step-number">2</div>
+                            <h3>Deep-Dive Analysis</h3>
+                            <p>Our master fitter benchmarks your current set, checks build tolerances, and models ball-flight windows.</p>
+                        </div>
+                        <div class="step-card">
+                            <div class="step-number">3</div>
+                            <h3>Blueprint &amp; Recommendations</h3>
+                            <p>Receive a full spec matrix—club-by-club loft/lie, shaft, length, swing weight, and grip—plus upgrade paths.</p>
+                        </div>
+                        <div class="step-card">
+                            <div class="step-number">4</div>
+                            <h3>Q&amp;A + Build Support</h3>
+                            <p>Hop on a follow-up call or email to tune gapping, finalize set makeup, or confirm in-store.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reviews -->
+    <section id="google-reviews" class="reviews-live">
+        <div class="container">
+            <h2 class="section-title">What Golfers Say</h2>
+            <p class="reviews-attrib">Powered by Google reviews • <a id="reviews-google-link" href="#" target="_blank" rel="noopener" class="google-link">See all reviews on Google</a></p>
+            <div id="reviews-grid" class="reviews-grid" aria-live="polite"></div>
+        </div>
+    </section>
+
+    <!-- Fitter Bio -->
+    <section class="fitter-bio" id="team">
+        <div class="container">
+            <div class="bio-content">
+                <div class="bio-text">
+                    <h2 class="section-title">Meet Your Fitter</h2>
+                    <h3>Alex Bollag • Master Club Fitter, GolfMax</h3>
+                    <p>Alex Bollag has spent nearly two decades fitting competitive amateurs, college standouts, and touring professionals. Every remote session mirrors the studio—launch monitor data, on-course feedback, and the exact build tolerances enforced inside the GolfMax workshop.</p>
+                    <div class="credentials">
+                        <div class="credential-item">
+                            <strong>Experience:</strong> 3,000+ custom fittings delivered across drivers, irons, and full-bag builds
+                        </div>
+                        <div class="credential-item">
+                            <strong>Specialties:</strong> Driver optimization, wedge gapping, speed training builds, and combo sets
+                        </div>
+                        <div class="credential-item">
+                            <strong>Certifications:</strong> True Temper Performance Fitting Center • Callaway Master Staff
+                        </div>
+                        <div class="credential-item">
+                            <strong>Studio:</strong> GolfMax Santa Barbara • Remote fittings delivered worldwide
+                        </div>
+                    </div>
+                </div>
+                <div class="bio-image">
+                    <img src="fitter.jpg" alt="GolfMax master fitter Alex Bollag" class="fitter-photo">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Remote Fitting Form -->
+    <section class="fitting-form-section" id="start">
+        <div class="container">
+            <div class="form-header">
+                <h2 class="section-title">Start Your Remote Fitting</h2>
+                <p class="form-description">Share where your current build needs help, upload a down-the-line swing, and we'll return a complete spec matrix within one business day.</p>
+            </div>
+            <form class="remote-fitting-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="name">Full Name *</label>
+                        <input type="text" id="name" name="name" autocomplete="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address *</label>
+                        <input type="email" id="email" name="email" autocomplete="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" autocomplete="tel">
+                    </div>
+                    <div class="form-group">
+                        <label for="handicap">Current Handicap</label>
+                        <select id="handicap" name="handicap">
+                            <option value="">Select handicap range</option>
+                            <option value="plus-handicap">Plus to 2</option>
+                            <option value="3-8">3 to 8</option>
+                            <option value="9-16">9 to 16</option>
+                            <option value="17-24">17 to 24</option>
+                            <option value="25-plus">25+</option>
+                            <option value="new-to-golf">New to golf</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="launch-monitor">Recent Launch Monitor (carry / spin)</label>
+                        <input type="text" id="launch-monitor" name="launch-monitor" placeholder="Driver: 158 ball speed, 255 carry, 2800 spin">
+                    </div>
+                    <div class="form-group">
+                        <label for="preferred-contact">Preferred Follow-up</label>
+                        <select id="preferred-contact" name="preferred-contact">
+                            <option value="">Select one</option>
+                            <option value="email">Email recap only</option>
+                            <option value="phone">Phone call</option>
+                            <option value="video">Video call / screen share</option>
+                        </select>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="current-clubs">Current Bag (brand / model / specs)</label>
+                        <textarea id="current-clubs" name="current-clubs" rows="3" placeholder="Driver: TSR2 9 deg, Ventus TR Blue 6X (tipped 1\"); Irons: i230 4-PW, Modus 120 S..."></textarea>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="goals">What should we fix first?</label>
+                        <textarea id="goals" name="goals" rows="3" placeholder="Example: tighten driver dispersion and add a dependable 230-yard option."></textarea>
+                    </div>
+                </div>
+                <div class="video-upload-section">
+                    <h3>Swing Video Upload *</h3>
+                    <p class="upload-instructions">Capture a single down-the-line swing with the camera at hand-height. Include ball flight where possible. Max file size 300&nbsp;MB.</p>
+                    <ul class="upload-tips">
+                        <li>Film in landscape and keep the entire motion, ball, and target line in frame.</li>
+                        <li>Lead with the club you want dialed in; add notes if you include multiple swings.</li>
+                        <li>Optional: drop TrackMan, GCQuad, or Toptracer numbers into the fields above.</li>
+                    </ul>
+                    <div class="upload-area">
+                        <input type="file" id="video" name="video" accept="video/*" required>
+                        <label for="video" class="upload-label">
+                            <span class="upload-icon">📹</span>
+                            <span class="upload-text" data-upload-filename>Choose Video File</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-status" data-form-status aria-live="polite"></div>
+                <div class="form-progress" data-upload-progress>
+                    <progress max="100" value="0"></progress>
+                    <span data-progress-text></span>
+                </div>
+                <button type="submit" class="submit-btn">Submit for Analysis</button>
+                <p class="form-footnote">We'll confirm receipt right away. Every remote fitting includes a full spec sheet, build recommendations, and an optional follow-up call with GolfMax.</p>
+            </form>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; <span id="year"></span> GolfMax. All rights reserved.</p>
+    </footer>
+
+    <script>
+        window.GM_PLACE_ID = window.GM_PLACE_ID || 'ChIJO8L3QtwU6YARnGKftpsMyfo';
+        window.GM_GOOGLE_URL = window.GM_GOOGLE_URL || 'https://www.google.com/maps/search/?api=1&query_place_id=ChIJO8L3QtwU6YARnGKftpsMyfo';
+        window.GM_UPLOAD_ENDPOINT = window.GM_UPLOAD_ENDPOINT || '/api/upload';
+    </script>
+    <script src="config.js?v=2"></script>
+    <script src="vendor/three.min.js"></script>
+    <script src="sphere.js?v=1"></script>
+    <script src="reviews.js?v=1"></script>
+    <script src="form.js?v=1"></script>
+    <script src="editmode.js?v=1"></script>
+    <script>
+        (function () {
+            const trigger = document.querySelector('.menu-trigger');
+            const dropdown = document.getElementById('nav-menu-dropdown');
+            if (!trigger || !dropdown) return;
+
+            const closeMenu = () => {
+                trigger.setAttribute('aria-expanded', 'false');
+                dropdown.classList.remove('open');
+            };
+
+            trigger.addEventListener('click', (event) => {
+                event.preventDefault();
+                const expanded = trigger.getAttribute('aria-expanded') === 'true';
+                trigger.setAttribute('aria-expanded', String(!expanded));
+                dropdown.classList.toggle('open', !expanded);
+            });
+
+            const items = dropdown.querySelectorAll('.menu-item');
+            trigger.addEventListener('keydown', (event) => {
+                if (event.key === 'ArrowDown') {
+                    if (trigger.getAttribute('aria-expanded') !== 'true') {
+                        trigger.click();
+                    }
+                    if (items.length) {
+                        items[0].focus();
+                        event.preventDefault();
+                    }
+                }
+            });
+
+            dropdown.addEventListener('click', (event) => {
+                if (event.target.closest('.menu-item')) {
+                    closeMenu();
+                }
+            });
+
+            document.addEventListener('click', (event) => {
+                if (!dropdown.contains(event.target) && event.target !== trigger) {
+                    closeMenu();
+                }
+            });
+
+            document.addEventListener('keyup', (event) => {
+                if (event.key === 'Escape') closeMenu();
+            });
+        })();
+    </script>
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>

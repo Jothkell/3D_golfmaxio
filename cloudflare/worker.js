@@ -1,11 +1,22 @@
+import { handleUploadRequest, jsonResponse } from '../shared/upload-handler.js';
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     const origin = request.headers.get('Origin') || '';
     if (request.method === 'OPTIONS') {
-      return new Response(null, { status: 204, headers: corsHeaders(url, origin, env) });
+      const headers = { ...corsHeaders(url, origin, env), 'access-control-max-age': '86400' };
+      return new Response(null, { status: 204, headers });
     }
-    if (url.pathname !== '/' && !url.pathname.endsWith('/api/reviews') && url.pathname !== '/api/reviews') {
+
+    if (url.pathname === '/api/upload') {
+      if (request.method !== 'POST') {
+        return jsonResponse({ error: 'method_not_allowed' }, 405, corsHeaders(url, origin, env));
+      }
+      return handleUploadRequest(request, env, { corsHeaders: corsHeaders(url, origin, env) });
+    }
+
+    if (url.pathname !== '/' && url.pathname !== '/api/reviews' && !url.pathname.endsWith('/api/reviews')) {
       return new Response('Not found', { status: 404, headers: corsHeaders(url, origin, env) });
     }
 
@@ -47,7 +58,13 @@ export default {
     }
 
     const resp = await fetch(google.toString());
+    if (!resp.ok) {
+      return json({ error: 'google_status_' + resp.status }, 502, url, origin, env);
+    }
     const data = await resp.json();
+    if (data?.status && data.status !== 'OK') {
+      return json({ error: data.status, message: data?.error_message || undefined }, 502, url, origin, env);
+    }
 
     const result = data?.result || {};
     const all = (result?.reviews || []);
@@ -74,27 +91,39 @@ export default {
 }
 
 function json(obj, status, url, origin, env) {
-  return new Response(JSON.stringify(obj), {
-    status: status || 200,
-    headers: { 'content-type': 'application/json; charset=utf-8', ...corsHeaders(url, origin, env) },
-  });
+  return jsonResponse(obj, status || 200, corsHeaders(url, origin, env));
 }
 
 function parseAllowedOrigins(env) {
   const fromEnv = (env && env.ALLOWED_ORIGINS) ? String(env.ALLOWED_ORIGINS) : '';
   const list = fromEnv.split(',').map(s => s.trim()).filter(Boolean);
-  // Always allow common local dev origins
-  const dev = ['http://localhost:8000', 'http://127.0.0.1:8000'];
-  for (const d of dev) if (!list.includes(d)) list.push(d);
-  return list;
+  const defaults = [
+    'https://freegolffitting.pages.dev',
+    'https://www.freegolffitting.pages.dev',
+    'https://freegolffitting.com',
+    'https://www.freegolffitting.com',
+    'http://localhost:8000',
+    'http://127.0.0.1:8000',
+    'http://localhost:8080',
+    'http://127.0.0.1:8080'
+  ];
+  const normalized = new Set(defaults.map(v => v.toLowerCase()));
+  for (const entry of list) {
+    if (entry === '*') {
+      return ['*'];
+    }
+    normalized.add(entry.toLowerCase());
+  }
+  return Array.from(normalized);
 }
 
 function corsHeaders(url, requestOrigin, env) {
   const allowed = parseAllowedOrigins(env);
-  const origin = (requestOrigin || '').toLowerCase();
-  const allowOrigin = allowed.includes(origin) ? origin : '';
+  const rawOrigin = (requestOrigin || '').trim();
+  const origin = rawOrigin.toLowerCase();
+  const allowOrigin = allowed.includes('*') ? '*' : (allowed.includes(origin) ? rawOrigin : '');
   const base = {
-    'access-control-allow-methods': 'GET, OPTIONS',
+    'access-control-allow-methods': 'GET, POST, OPTIONS',
     'access-control-allow-headers': 'content-type',
     'vary': 'Origin',
   };

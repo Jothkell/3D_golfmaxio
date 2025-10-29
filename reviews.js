@@ -18,6 +18,26 @@
     return '★★★★★'.slice(0, s) + '☆☆☆☆☆'.slice(0, 5 - s);
   }
 
+  function authorLabel(name){
+    const raw = (name || 'Google User').trim();
+    if (!raw || raw.toLowerCase() === 'google user') return 'Google User';
+    const parts = raw.split(/\s+/).filter(Boolean);
+    if (parts.length === 1) return parts[0];
+    const first = parts[0];
+    const lastInitial = parts[parts.length - 1].charAt(0).toUpperCase();
+    return `${first} ${lastInitial}.`;
+  }
+
+  function snippet(text, max = 140){
+    if (!text) return '';
+    const stripped = String(text).replace(/\s+/g, ' ').trim();
+    if (stripped.length <= max) return stripped;
+    const truncated = stripped.slice(0, max);
+    const lastSpace = truncated.lastIndexOf(' ');
+    const result = lastSpace > 60 ? truncated.slice(0, lastSpace) : truncated;
+    return `${result}…`;
+  }
+
   function render(reviews, listingUrl, avgRating, totalCount){
     grid.innerHTML = '';
     const all = Array.isArray(reviews) ? reviews : [];
@@ -29,7 +49,8 @@
     // Ensure only reviews above 4 stars, newest first
     const items = all
       .filter(r => (r.rating || 0) >= 4)
-      .sort((a,b) => (b.time || 0) - (a.time || 0));
+      .sort((a,b) => (b.time || 0) - (a.time || 0))
+      .slice(0, 12);
 
     for (const r of items){
       const card = document.createElement('div');
@@ -49,17 +70,47 @@
     }
     if (link){ link.href = listingUrl || GOOGLE_URL || '#'; }
 
-    // Also populate the top scrolling banner with 5-star snippets
+    // Also populate the top scrolling banner with snippets
     const ticker = document.getElementById('reviews-ticker');
     if (ticker){
-      const mkItem = (rev) => `
+      const mkItem = (rev) => {
+        const safe = (rev.text || '').replace(/</g,'&lt;');
+        return `
         <div class="review-item">
-          <div class="stars">★★★★★</div>
-          <p>"${(rev.text || '').replace(/</g,'&lt;')}" - ${rev.author_name || 'Google User'}</p>
+          <div class="stars" aria-hidden="true">${stars(rev.rating || 5)}</div>
+          <div class="review-snippet">“${snippet(safe)}”</div>
+          <div class="review-author">${authorLabel(rev.author_name)}</div>
         </div>`;
-      const seq = items.slice(0, 12).map(mkItem).join('');
+      };
+      const seq = items.map(mkItem).join('');
       // duplicate once for seamless scrolling illusion
       ticker.innerHTML = seq + seq;
+    }
+
+    const metaBar = document.getElementById('reviews-meta');
+    if (metaBar){
+      const ratingEl = metaBar.querySelector('[data-rating]');
+      if (ratingEl && typeof computedAvg === 'number') {
+        ratingEl.textContent = computedAvg.toFixed(1);
+      }
+      const countEl = metaBar.querySelector('[data-count]');
+      if (countEl) {
+        if (typeof computedTotal === 'number' && computedTotal > 0) {
+          let formatted = String(computedTotal);
+          try {
+            const nf = (typeof Intl !== 'undefined' && Intl.NumberFormat) ? new Intl.NumberFormat('en-US') : null;
+            if (nf) formatted = nf.format(computedTotal);
+          } catch {}
+          countEl.textContent = `Based on ${formatted}+ Google reviews`;
+        } else {
+          countEl.textContent = 'Verified Google club-fitting reviews';
+        }
+      }
+      const metaLink = metaBar.querySelector('[data-meta-link]');
+      if (metaLink) {
+        metaLink.href = listingUrl || GOOGLE_URL || metaLink.href || '#';
+      }
+      metaBar.hidden = false;
     }
 
     // Expose rating meta for other widgets

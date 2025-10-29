@@ -3,48 +3,53 @@
 This document captures the current state, live links, and the exact next actions so a new engineer (or future Codex run) can continue seamlessly.
 
 ## TL;DR — What’s Working Now
-- Static site runs locally: `python3 -m http.server 8080` → http://localhost:8080
-- Cloudflare Pages preview (latest): shown in deploy output URLs (`*.freegolffitting.pages.dev`).
-- Reviews integration is implemented and filtered to rating >= 4 stars.
-- Cloudflare Worker deployed (script name `golfmax-reviews`) and bound to routes:
-  - `https://freegolffitting.com/api/reviews*`
-  - `https://www.freegolffitting.com/api/reviews*`
-  - Note: DNS for the domain is not live yet, so those URLs won’t resolve.
-- Cloudflare Pages Function added for previews: `functions/api/reviews.js`.
-- Frontend reads runtime config from `/aws/config.json` when present.
-- Static assets published to `s3://freegolffitting-site` (`us-west-2`) with website endpoint: `http://freegolffitting-site.s3-website-us-west-2.amazonaws.com/`.
-- CloudFront distribution `E3O6C05H4ST9HA` (domain `d268b7nk0cktd7.cloudfront.net`) fronts the bucket; ACM cert `arn:aws:acm:us-east-1:327512371169:certificate/fa78d944-51e7-4b29-a16c-5d3ff0688647` is attached.
-- AWS SAM stack `golfmax-reviews` deployed in `us-west-2`; API Gateway endpoint `https://6bqg4174x8.execute-api.us-west-2.amazonaws.com/api/reviews` feeds the site via `/aws/config.json`.
-- Public-facing pages (`index.html`, `landingpage_2.html`, `globe.html`, `existing_site.html`, `reference_site.html`, `3d/index.html`) now render a "Coming Soon" placeholder while the experience is under construction.
+- Production-ready remote fitting LP with live copy, process overview, and intake form lives in `index.html`.
+- Reviews integration pulls fresh Google Places data (rating ≥4) via Worker/Pages Function/Lambda.
+- Swing video uploads post to `/api/upload`, stream into R2, and write metadata JSON.
+- Cloudflare Worker (`golfmax-reviews`) serves both `/api/reviews` and `/api/upload`; Pages Function equivalents live in `functions/api/`.
+- Frontend consumes runtime config from `/aws/config.json` (REVIEWS_ENDPOINT, PLACE_ID, GOOGLE_URL, UPLOAD_ENDPOINT).
+- Static assets staged to `s3://freegolffitting-site` (`us-west-2`) and fronted by CloudFront distribution `d268b7nk0cktd7.cloudfront.net`.
+- AWS SAM stack `golfmax-reviews` deployed in `us-west-2`; API Gateway endpoint `https://6bqg4174x8.execute-api.us-west-2.amazonaws.com/api/reviews` currently used by `/aws/config.json`.
 
 ## Key Paths
-- Frontend entry: `index.html`, alternate LP: `landingpage_2.html`.
-- Reviews fetcher: `reviews.js` (waits for optional `/aws/config.json` overrides).
-- Client config: `config.js`.
-- Cloudflare Worker: `cloudflare/worker.js` + `cloudflare/wrangler.toml` (routes, vars).
-- Cloudflare Pages Function: `functions/api/reviews.js` (same-origin API for previews).
-- AWS Lambda (Reviews proxy) source: `aws/lambda/reviews/index.js`.
-- AWS SAM template (Reviews API): `aws/sam/template.yaml`.
-- S3/CloudFront stack (optional): `aws/cloudfront-site.yaml`.
-- Build/deploy helpers:
-  - `scripts/build_public.sh` → assembles `public/` with optional `/aws/config.json`.
-  - `scripts/aws_sync_s3.sh s3://YOUR_BUCKET --region us-east-1` → syncs `public/` to S3.
-- Runtime config shipped at `aws/config.json` (update `REVIEWS_ENDPOINT` once the AWS API is live); example template remains at `aws/config.sample.json`.
+- Frontend entry: `index.html`; alt experiences remain under `landingpage_2.html`, `globe.html`, etc.
+- Reviews hydration: `reviews.js` (awaits `GM_CONFIG_READY` for runtime overrides).
+- Intake UX: `form.js` (progress + validation) with supporting styles in `styles.css`.
+- Runtime config loader: `config.js`.
+- Shared upload implementation: `shared/upload-handler.js`.
+- Cloudflare Worker: `cloudflare/worker.js` (routes, CORS, caching).
+- Cloudflare Pages Functions: `functions/api/reviews.js`, `functions/api/upload.js`.
+- AWS assets: `aws/lambda/reviews/index.js`, `aws/sam/template.yaml`, `aws/cloudfront-site.yaml`.
+- Build/deploy scripts:
+  - `scripts/build_public.sh` — builds `public/` (consumes `aws/config.json`).
+  - `scripts/aws_sync_s3.sh s3://YOUR_BUCKET --region us-west-2` — rebuild + sync bundle.
+- Runtime config examples: `aws/config.json`, `aws/config.sample.json` (now includes `UPLOAD_ENDPOINT`).
 
 ## Secrets & Config (where they live)
-- Google Places API key:
-  - Stored as a Cloudflare Worker secret (`GOOGLE_API_KEY`) — not in repo.
-  - Stored as a Cloudflare Pages secret for preview Function — not in repo.
-  - For AWS, SAM deploy expects `GoogleApiKey` parameter.
-- Place ID in use: `ChIJO8L3QtwU6YARnGKftpsMyfo` (also set as Worker var and used by LP2).
+- **Google Places API key**:
+  - Cloudflare Worker secret `GOOGLE_API_KEY`.
+  - Cloudflare Pages Function secret `GOOGLE_API_KEY`.
+  - AWS SAM parameter `GoogleApiKey`.
+- **Place ID**: `ChIJO8L3QtwU6YARnGKftpsMyfo` (Worker/Pages/Lambda env `PLACE_ID`).
+- **Upload storage**:
+  - Cloudflare R2 binding `VIDEO_UPLOADS` required for Worker + Pages upload endpoint.
+  - Optional `UPLOAD_MAX_MB` (default 300) and `UPLOAD_WEBHOOK_URL` for notifications.
+- **Email alerts (optional)**:
+  - Configure SendGrid (or compatible API) via `SENDGRID_API_KEY`.
+  - Set `UPLOAD_NOTIFY_TO` (and optionally `UPLOAD_NOTIFY_FROM`, `UPLOAD_NOTIFY_FROM_NAME`, `UPLOAD_NOTIFY_SUBJECT`) so each intake generates an email.
+- **Allowed origins**: Worker env `ALLOWED_ORIGINS` for CORS (comma-separated).
+- `/aws/config.json`: defines `REVIEWS_ENDPOINT`, `PLACE_ID`, `GOOGLE_URL`, `UPLOAD_ENDPOINT`.
 
 ## What’s Pending (needs account access)
-1) Cloudflare:
-   - Domain `freegolffitting.com` must be onboarded and proxied (orange cloud) so the Worker routes activate.
-2) AWS (recommended hosting target + API):
-- Deploy the SAM Reviews API and capture the output URL. ✅ (`https://6bqg4174x8.execute-api.us-west-2.amazonaws.com/api/reviews`)
-   - Attach CloudFront + custom domain in front of `s3://freegolffitting-site`.
-   - (Future 3D pipeline) Create `video-input`, `model-output`, and `artifacts` buckets in `us-west-2`.
+1. **Cloudflare**
+   - Bind R2 bucket for swing uploads (`VIDEO_UPLOADS`). Suggested name: `golfmax-remote-fittings`.
+   - Add secrets/vars: `GOOGLE_API_KEY`, `PLACE_ID`, `ALLOWED_ORIGINS`, optional `UPLOAD_MAX_MB`, `UPLOAD_WEBHOOK_URL`.
+   - Ensure `/api/upload` and `/api/reviews` routes point to `golfmax-reviews` Worker (or migrate to Pages Functions per environment).
+   - Onboard `freegolffitting.com` and `www.freegolffitting.com`; set DNS to CloudFront (gray-cloud) or reroute through Cloudflare Pages.
+2. **AWS**
+   - (Done) Reviews SAM stack deployed — update key restrictions so Google Places returns `OK`.
+   - (Optional) Stand up an S3/S3+Lambda equivalent for uploads if Cloudflare R2 is not desired.
+   - Create dedicated S3 buckets for future 3D workflow (`video-input`, `model-output`, `artifacts`).
 
 ## Exact Next Actions
 
@@ -64,14 +69,16 @@ Outputs:
 - Copy `ReviewsEndpoint` (final URL is `https://<api-id>.execute-api.<region>.amazonaws.com/api/reviews`).
 
 ### B) Point the site to the AWS API (no rebuild required)
-`aws/config.json` now points to the deployed endpoint:
+`aws/config.json` currently holds:
 ```
 {
-  "REVIEWS_ENDPOINT": "<ReviewsEndpoint>",
-  "PLACE_ID": "ChIJO8L3QtwU6YARnGKftpsMyfo"
+  "REVIEWS_ENDPOINT": "https://6bqg4174x8.execute-api.us-west-2.amazonaws.com/api/reviews",
+  "PLACE_ID": "ChIJO8L3QtwU6YARnGKftpsMyfo",
+  "GOOGLE_URL": "https://www.google.com/maps/search/?api=1&query_place_id=ChIJO8L3QtwU6YARnGKftpsMyfo",
+  "UPLOAD_ENDPOINT": "/api/upload"
 }
 ```
-Static site is synced to S3/CloudFront. If you change the endpoint or config, rebuild with `scripts/build_public.sh` and `scripts/aws_sync_s3.sh s3://freegolffitting-site --region us-west-2`. Placeholder content keeps visitors away from unfinished flows; remove the block once launch-ready.
+Update `REVIEWS_ENDPOINT` (and `UPLOAD_ENDPOINT` if the upload handler lives elsewhere) as environments change, then rebuild with `scripts/build_public.sh`.
 
 ### C) Finish CloudFront + custom domain
 - CloudFront distribution `d268b7nk0cktd7.cloudfront.net` is provisioning — wait for status `Deployed`.
@@ -80,16 +87,18 @@ Static site is synced to S3/CloudFront. If you change the endpoint or config, re
 - Optional: lock S3 bucket to CloudFront-only access later (convert to Origin Access Control + tighten bucket policy).
 
 ## Behavior Notes
-- Reviews filter: both backend (Worker/Function/Lambda) and frontend show only rating >= 4.
-- Landing Page 2 (`landingpage_2.html`) disables mock fallback; if API fails, it shows no placeholders.
-- The badge in LP2 links to the Google listing URL (from API when available, otherwise built from Place ID).
+- Frontend awaits `window.GM_CONFIG_READY` before hitting endpoints, allowing `/aws/config.json` overrides.
+- Reviews are filtered server + client side for rating ≥4 and capped at 12; ticker duplicates the set for seamless scroll.
+- Upload handler enforces required `name`, `email`, and `video` fields; rejects files > `UPLOAD_MAX_MB`.
+- Landing Page 2 still disables mock fallback and remains a lightweight preview variant (update copy later if needed).
 
 ## Verification Checklist
-- Local dev: `python3 -m http.server 8080` → http://localhost:8080 → `WHAT CLIENTS SAY` shows cards once API is reachable.
-- Pages preview: `*.freegolffitting.pages.dev/landingpage_2.html` uses the Pages Function `/api/reviews`.
-- Production (Cloudflare): Once DNS is live, `/api/reviews` is served by the Worker.
-- Production (AWS): CloudFront domain `https://d268b7nk0cktd7.cloudfront.net` currently serves the site (S3 origin). After DNS cuts over, confirm the site reads `REVIEWS_ENDPOINT` from `/aws/config.json` and calls API Gateway. Current Google key responds with `REQUEST_DENIED`; lift the key restrictions or supply a server-side key so Lambda succeeds.
-- SEO holding pattern: `robots.txt` disallows crawling until launch; `sitemap.xml` lists only `index.html`.
+- `python3 -m http.server 8080` → confirm hero copy, process steps, bio, and form render properly.
+- Reviews: ensure `/api/reviews` returns 200 and populates both ticker (`#reviews-ticker`) and cards (`#reviews-grid`).
+- Upload: submit a <100 MB test video; expect `{ ok: true, objectKey: ... }` and new objects in R2 (`videos/<timestamp>_<slug>.ext` plus JSON metadata).
+- `/aws/config.json` served with correct cache headers and values (no browser caching issues due to `no-store` fetch).
+- Mobile: verify hero CTA stack, sticky video behavior, and form spacing ≤768px.
+- SEO: update `sitemap.xml` origin and flip `robots.txt` to allow indexing when ready.
 
 ## Contact Points for the Next Engineer
 - If Cloudflare Worker returns errors, run `npx wrangler tail golfmax-reviews` in `cloudflare/`.
@@ -98,3 +107,12 @@ Static site is synced to S3/CloudFront. If you change the endpoint or config, re
 
 ---
 This handoff was written to be the single source of truth for next steps. Prefer updating this file if deployment choices change (Cloudflare-only vs AWS).
+
+## Session Notes — 2025-10-28
+- Restored public landing to the coming-soon shell (`index.html`), keeping the full remote-fitting experience at `remote-preview.html` for future iterations.
+- Deployed today's review pipeline changes: Cloudflare Worker, Pages Function, and AWS Lambda now return 4+ star Google Places reviews; frontend ticker shows first-name/initial plus clipped quote.
+- Nav "Explore" dropdown stacking fixed (z-index adjustments) so it sits over the reviews ticker.
+- Alex Bollag copy + imagery now live after S3 sync and CloudFront invalidations (`E3O6C05H4ST9HA`). Current invalidation IDs: `I40MTXRAS3NAKTUC3BOC6P1DIU` and `I3F9J03QKDEBKHXFNQCYRHXYKY` (both kicked today).
+- Production bundle built via `scripts/build_public.sh` and synced to `s3://freegolffitting-site`; ensure to rerun this before edits go live.
+- Google Places API key stored in Cloudflare secret `GOOGLE_API_KEY`; DNS proxied through Cloudflare (both apex & www) so `/api/reviews` Worker is active.
+- To preview the new layout without flipping prod, open `/remote-preview.html`. Update it in tandem with `index.html` when removing the coming-soon gate.

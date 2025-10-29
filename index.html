@@ -4,162 +4,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GolfMax Remote Fitting | Coming Soon</title>
-    <meta name="description" content="GolfMax remote fitting experience is coming soon. Stay tuned for the launch.">
-    <link rel="canonical" href="index.html">
-    <meta name="theme-color" content="#000000">
-
-    <!-- Open Graph -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="GolfMax Remote Fitting | Coming Soon">
-    <meta property="og:description" content="GolfMax remote fitting experience is coming soon. Stay tuned for the launch.">
-    <meta property="og:image" content="logo.png">
-
-    <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="GolfMax Remote Fitting | Coming Soon">
-    <meta name="twitter:description" content="GolfMax remote fitting experience is coming soon. Stay tuned for the launch.">
-    <meta name="twitter:image" content="logo.png">
-
+    <meta name="robots" content="noindex">
     <link rel="stylesheet" href="styles.css?v=5">
     <style>
-        body.coming-soon {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: stretch;
-            justify-content: flex-start;
-            text-align: center;
-            color: #f6f7f9;
-        }
-        .coming-soon-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background: rgba(0,0,0,0.75);
-            backdrop-filter: blur(6px);
-            border-bottom: 1px solid rgba(255,255,255,0.08);
-            z-index: 1000;
-        }
-        .coming-soon-header .nav-container {
-            justify-content: space-between;
-        }
-        .coming-soon-main {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 160px 1.5rem 80px;
-            position: relative;
-            z-index: 1;
-        }
-        .coming-soon-card {
-            max-width: 680px;
-            background: rgba(0,0,0,0.6);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 24px;
-            padding: 3rem 2rem;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.45);
-            position: relative;
-            z-index: 1;
-        }
-        .coming-soon-card h1 {
-            font-size: clamp(2.8rem, 5vw, 4.5rem);
-            letter-spacing: 0.12em;
-            margin-bottom: 1rem;
-            color: #f6f7f9;
-        }
-        .coming-soon-card p {
-            margin-bottom: 1.25rem;
-            color: rgba(246,247,249,0.85);
-            font-size: 1.1rem;
-        }
-        .coming-soon-card .coming-soon__cta {
-            display: inline-block;
-            margin-top: 1.5rem;
-            padding: 0.85rem 1.8rem;
-            border: 2px solid #f6f7f9;
-            color: #0a0a0a;
-            background: #f6f7f9;
-            text-decoration: none;
-            font-weight: 700;
-            letter-spacing: 0.05em;
-            transition: all 0.3s ease;
-        }
-        .coming-soon-card .coming-soon__cta:hover {
-            background: transparent;
-            color: #f6f7f9;
-        }
-        footer.site-footer {
-            background: rgba(0,0,0,0.75);
-            border-top: 1px solid rgba(255,255,255,0.08);
-            position: relative;
-            z-index: 1;
-        }
-        footer .footer-grid {
-            justify-content: center;
-            gap: 1.5rem;
-        }
-        footer .footer-meta p {
-            color: rgba(246,247,249,0.7);
-        }
-
-        @media (max-width: 640px) {
-            .coming-soon-card {
-                padding: 2.5rem 1.5rem;
-            }
-            .coming-soon-header .shop-btn {
-                display: none;
-            }
-        }
+        body{min-height:100vh;margin:0;background:#0a0a0a;color:#f6f7f9;font-family:'Work Sans',Arial,sans-serif;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;background-image:url('./background.png');padding-top:80px;position:relative;overflow:hidden}
+        .coming-wrapper{flex:1;display:flex;align-items:center;justify-content:center;padding:2rem;position:relative;z-index:1}
+        .coming-card{max-width:640px;background:rgba(0,0,0,0.65);border:1px solid rgba(255,255,255,0.08);border-radius:24px;padding:3rem 2rem;text-align:center;box-shadow:0 25px 60px rgba(0,0,0,0.45);position:relative;z-index:1}
+        .coming-card h1{font-size:clamp(2.5rem,5vw,4rem);letter-spacing:0.12em;margin-bottom:1.25rem}
+        .coming-card p{margin-bottom:1rem;color:rgba(246,247,249,0.85)}
+        .coming-card a{display:inline-block;margin-top:1.5rem;padding:0.85rem 1.8rem;background:#f6f7f9;color:#0a0a0a;text-decoration:none;font-weight:700;border:2px solid #f6f7f9;transition:all .3s ease}
+        .coming-card a:hover{background:transparent;color:#f6f7f9}
+        .nav-brand{display:flex;align-items:center;justify-content:center;gap:16px;padding:1.5rem 0}
+        footer{padding:1.5rem 0;background:rgba(0,0,0,0.75);text-align:center;border-top:1px solid rgba(255,255,255,0.08)}
+        footer p{margin:0;color:rgba(246,247,249,0.65)}
     </style>
 </head>
-<body class="coming-soon">
-    <!-- Background Canvas -->
+<body>
     <div id="bg3d" aria-hidden="true">
         <canvas id="bg3d-canvas"></canvas>
     </div>
-
-    <!-- Header -->
-    <header class="coming-soon-header">
-        <nav class="navbar">
-            <div class="nav-container">
-                <div class="nav-brand">
-                    <img src="logo.png?v=3" alt="GolfMax Logo" class="nav-logo">
-                    <img src="ofs_free.png?v=2" alt="Free Online Fitting Service" class="nav-ofs" onerror="this.style.display='none'">
-                </div>
-                <a href="https://www.thegolfmax.com" class="shop-btn" target="_blank" rel="noopener">Visit GolfMax</a>
-            </div>
-        </nav>
-    </header>
-
-    <main class="coming-soon-main">
-        <div class="coming-soon-card">
+    <div class="nav-brand" style="position:relative;z-index:1;">
+        <img src="logo.png?v=3" alt="GolfMax Logo" class="nav-logo" style="height:72px;">
+        <img src="ofs_free.png?v=2" alt="Free Online Fitting Service" class="nav-ofs" style="height:72px;" onerror="this.style.display='none'">
+    </div>
+    <div class="coming-wrapper">
+        <div class="coming-card">
             <h1>COMING&nbsp;SOON</h1>
-            <p>We’re perfecting the GolfMax remote fitting experience to deliver club recommendations that match your swing with tour-level precision.</p>
-            <p>Check back soon or follow GolfMax for launch updates. In the meantime, explore our in-store fittings and gear.</p>
-            <a class="coming-soon__cta" href="https://www.thegolfmax.com" target="_blank" rel="noopener">Go to GolfMax.com</a>
+            <p>This page is part of the upcoming GolfMax remote fitting experience.</p>
+            <p>We’re polishing the details and will unveil the full experience soon.</p>
+            <a href="https://www.thegolfmax.com" target="_blank" rel="noopener">Visit GolfMax.com</a>
         </div>
-    </main>
-
-    <footer class="site-footer">
-        <div class="container">
-            <div class="footer-grid">
-                <div class="footer-brand">
-                    <img src="logo.png?v=3" alt="GolfMax Logo">
-                    <p>Remote fitting is in development. We’ll be teeing off soon.</p>
-                </div>
-                <div class="footer-meta">
-                    <p>© <span id="year"></span> GolfMax. All rights reserved.</p>
-                </div>
-            </div>
-        </div>
+    </div>
+    <footer style="position:relative;z-index:1;">
+        <p>© <span id="year"></span> GolfMax. All rights reserved.</p>
     </footer>
-
     <script src="vendor/three.min.js"></script>
     <script src="sphere.js"></script>
-    <script>
-        document.getElementById('year').textContent = new Date().getFullYear();
-    </script>
+    <script>document.getElementById('year').textContent=new Date().getFullYear();</script>
 </body>
 </html>

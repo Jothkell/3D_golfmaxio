@@ -3,6 +3,7 @@ AWS deployment for MVP
 This guide sets up:
 - Static site hosting on S3 + optional CloudFront
 - A serverless reviews API on AWS Lambda + API Gateway that safely calls Google Places
+- (Optional) Backend primitives if you prefer AWS S3 for swing uploads instead of Cloudflare R2
 
 Prereqs
 - AWS account with admin permissions for S3, Lambda, API Gateway
@@ -87,6 +88,25 @@ Build and deploy (guided on first run):
      // Optionally:
      window.GM_PLACE_ID = "<YOUR_PLACE_ID>";
    - Alternatively, create `aws/config.json` with `REVIEWS_ENDPOINT` set and deploy the site; the frontend will auto-detect it.
+   - `aws/config.json` already includes `"UPLOAD_ENDPOINT": "/api/upload"` — update this if your uploads live behind API Gateway/Lambda instead of the Cloudflare Worker.
+
+## Optional: AWS-native Uploads
+
+If Cloudflare R2 is not available, replicate the uploader using S3 + Lambda:
+
+1. Create an S3 bucket (e.g., `golfmax-remote-uploads`) with private ACL.
+2. Add a Lambda (Node.js 20) that accepts multipart form-data, writes the video + metadata to S3, and returns `{ ok: true }`.
+3. Wire the Lambda behind API Gateway `POST /api/upload` with CORS mirroring the reviews endpoint.
+4. Update `/aws/config.json`:
+   ```json
+   {
+     "REVIEWS_ENDPOINT": "https://<reviews-api>/api/reviews",
+     "PLACE_ID": "ChIJO8L3QtwU6YARnGKftpsMyfo",
+     "GOOGLE_URL": "https://www.google.com/maps/search/?api=1&query_place_id=ChIJO8L3QtwU6YARnGKftpsMyfo",
+     "UPLOAD_ENDPOINT": "https://<uploads-api>/api/upload"
+   }
+   ```
+5. Set environment variables similar to the Cloudflare handler (`MAX_MB`, optional webhook URL) and ensure multipart parsing keeps memory usage safe (use streaming libraries like `busboy`). For email alerts, invoke your provider (e.g., SendGrid, SES) from the Lambda after the S3 upload succeeds.
 
 Local test tip:
 - Serve the site locally: `python3 -m http.server` → http://localhost:8000

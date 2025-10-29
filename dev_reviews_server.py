@@ -55,7 +55,13 @@ class Handler(BaseHTTPRequestHandler):
 
     def _cors(self):
         origin = self.headers.get('Origin') or ''
-        if origin in ('http://localhost:8080', 'http://127.0.0.1:8080'):
+        allowed = {
+            'http://localhost:8000',
+            'http://127.0.0.1:8000',
+            'http://localhost:8080',
+            'http://127.0.0.1:8080',
+        }
+        if origin in allowed:
             self.send_header('Access-Control-Allow-Origin', origin)
         self.send_header('Access-Control-Allow-Methods', 'GET, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', 'content-type')
@@ -74,4 +80,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
