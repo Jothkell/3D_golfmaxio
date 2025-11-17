@@ -1,0 +1,32 @@
+/* Overrides for landingpage_2: remove subsection-specific backgrounds so only the 3D sphere shows */
+
+body.no-section-bg {
+  background: transparent !important;
+  background-image: none !important;
+}
+
+body.no-section-bg .reviews-banner,
+body.no-section-bg .hero-section,
+body.no-section-bg .video-process-section,
+body.no-section-bg .reviews-live,
+body.no-section-bg .fitter-bio,
+body.no-section-bg .fitting-form-section,
+body.no-section-bg header {
+  background: transparent !important;
+}
+
+/* Cards and panels */
+body.no-section-bg .review-card,
+body.no-section-bg .highlight-item,
+body.no-section-bg .step-card,
+body.no-section-bg .credential-item,
+body.no-section-bg .remote-fitting-form,
+body.no-section-bg .showcase-card,
+body.no-section-bg .menu-dropdown {
+  background: transparent !important;
+  box-shadow: none !important;
+  border-color: transparent !important;
+}
+
+/* Keep nav bar styling as-is for legibility */
+

@@ -3,253 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GolfMax Remote Fitting | Expert Golf Club Fitting Service</title>
-    <meta name="description" content="Professional remote golf club fitting service by GolfMax. Submit your swing video for expert analysis and custom club recommendations.">
-    <link rel="stylesheet" href="styles.css?v=4">
+    <title>GolfMax Remote Fitting | Coming Soon</title>
+    <meta name="robots" content="noindex">
+    <link rel="stylesheet" href="styles.css?v=5">
+    <style>
+        body{min-height:100vh;margin:0;background:#0a0a0a;color:#f6f7f9;font-family:'Work Sans',Arial,sans-serif;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;background-image:url('./background.png');padding-top:80px;position:relative;overflow:hidden}
+        .coming-wrapper{flex:1;display:flex;align-items:center;justify-content:center;padding:2rem;position:relative;z-index:1}
+        .coming-card{max-width:640px;background:rgba(0,0,0,0.65);border:1px solid rgba(255,255,255,0.08);border-radius:24px;padding:3rem 2rem;text-align:center;box-shadow:0 25px 60px rgba(0,0,0,0.45);position:relative;z-index:1}
+        .coming-card h1{font-size:clamp(2.5rem,5vw,4rem);letter-spacing:0.12em;margin-bottom:1.25rem}
+        .coming-card p{margin-bottom:1rem;color:rgba(246,247,249,0.85)}
+        .coming-card a{display:inline-block;margin-top:1.5rem;padding:0.85rem 1.8rem;background:#f6f7f9;color:#0a0a0a;text-decoration:none;font-weight:700;border:2px solid #f6f7f9;transition:all .3s ease}
+        .coming-card a:hover{background:transparent;color:#f6f7f9}
+        .nav-brand{display:flex;align-items:center;justify-content:center;gap:16px;padding:1.5rem 0}
+        footer{padding:1.5rem 0;background:rgba(0,0,0,0.75);text-align:center;border-top:1px solid rgba(255,255,255,0.08)}
+        footer p{margin:0;color:rgba(246,247,249,0.65)}
+    </style>
 </head>
 <body>
-    <!-- Navigation Bar -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="nav-brand">
-                <img src="logo.png?v=3" alt="GolfMax Logo" class="nav-logo">
-                <img src="ofs_free.png?v=2" alt="Free Online Fitting Service" class="nav-ofs" onerror="this.style.display='none'">
-            </div>
-            <a href="https://www.thegolfmax.com" class="shop-btn" target="_blank">SHOP</a>
-        </div>
-    </nav>
-
-    <!-- Scrolling Reviews Banner -->
-    <div class="reviews-banner">
-        <div class="reviews-scroll">
-            <div class="review-item">
-                <div class="stars">★★★★★</div>
-                <p>"Amazing service and expertise! Found the perfect clubs for my game." - John D.</p>
-            </div>
-            <div class="review-item">
-                <div class="stars">★★★★★</div>
-                <p>"Professional fitting process. Improved my game significantly!" - Sarah M.</p>
-            </div>
-            <div class="review-item">
-                <div class="stars">★★★★★</div>
-                <p>"Outstanding knowledge and customer service. Highly recommend!" - Mike R.</p>
-            </div>
-            <div class="review-item">
-                <div class="stars">★★★★★</div>
-                <p>"Best golf shop in Santa Barbara. Great fitting experience!" - Lisa K.</p>
-            </div>
-            <div class="review-item">
-                <div class="stars">★★★★★</div>
-                <p>"Expert fitter helped me find clubs that transformed my swing." - David L.</p>
-            </div>
-            <!-- Duplicate for seamless scrolling -->
-            <div class="review-item">
-                <div class="stars">★★★★★</div>
-                <p>"Amazing service and expertise! Found the perfect clubs for my game." - John D.</p>
-            </div>
-            <div class="review-item">
-                <div class="stars">★★★★★</div>
-                <p>"Professional fitting process. Improved my game significantly!" - Sarah M.</p>
-            </div>
+    <div id="bg3d" aria-hidden="true">
+        <canvas id="bg3d-canvas"></canvas>
+    </div>
+    <div class="nav-brand" style="position:relative;z-index:1;">
+        <img src="logo.png?v=3" alt="GolfMax Logo" class="nav-logo" style="height:72px;">
+        <a href="landingpage_3.html" style="display:inline-flex;align-items:center;" aria-label="Open GolfMax preview">
+            <img src="ofs_free.png?v=3" alt="Free Online Fitting Service" class="nav-ofs" style="height:72px;" onerror="this.style.display='none'">
+        </a>
+    </div>
+    <div class="coming-wrapper">
+        <div class="coming-card">
+            <h1>COMING&nbsp;SOON</h1>
+            <p>This page is part of the upcoming GolfMax remote fitting experience.</p>
+            <p>We’re polishing the details and will unveil the full experience soon.</p>
+            <a href="https://www.thegolfmax.com" target="_blank" rel="noopener">Visit GolfMax.com</a>
         </div>
     </div>
-
-    <!-- Hero Section -->
-    <section class="hero-section">
-        <div class="hero-content">
-            <h1 class="hero-title">REMOTE FITTING</h1>
-            <p class="hero-subtitle">Get professionally fitted from anywhere in the world</p>
-            <div class="hero-stats">
-                <div class="stat-item">
-                    <span class="stat-number">500+</span>
-                    <span class="stat-label">Successful Fittings</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-number">20+</span>
-                    <span class="stat-label">Years Experience</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-number">95%</span>
-                    <span class="stat-label">Client Satisfaction</span>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Video and How It Works Section -->
-    <section class="video-process-section">
-        <div class="container">
-            <div class="video-process-grid">
-                <!-- Video Section -->
-                <div class="video-section">
-                    <div class="video-content">
-                        <h2 class="section-title">SEE IT IN ACTION</h2>
-                        <p class="video-description">Watch our expert fitting process and learn how remote analysis delivers professional results from anywhere in the world.</p>
-                        
-                        <div class="video-wrapper">
-                            <!-- Replace YOUTUBE_VIDEO_ID with your actual YouTube video ID -->
-                            <iframe 
-                                src="https://www.youtube.com/embed/YOUTUBE_VIDEO_ID" 
-                                title="GolfMax Remote Fitting Process"
-                                frameborder="0" 
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                                allowfullscreen>
-                            </iframe>
-                        </div>
-                        
-                        <div class="video-highlights">
-                            <div class="highlight-item">
-                                <span class="highlight-icon">🎯</span>
-                                <span>Precision Analysis</span>
-                            </div>
-                            <div class="highlight-item">
-                                <span class="highlight-icon">📊</span>
-                                <span>Data-Driven Results</span>
-                            </div>
-                            <div class="highlight-item">
-                                <span class="highlight-icon">🏌️</span>
-                                <span>Swing Optimization</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- How It Works Section -->
-                <div class="how-it-works">
-                    <h2 class="section-title">HOW IT WORKS</h2>
-                    <div class="steps-grid">
-                        <div class="step-card">
-                            <div class="step-number">1</div>
-                            <h3>SUBMIT YOUR INFO</h3>
-                            <p>Fill out our comprehensive fitting form with your current specs and goals</p>
-                        </div>
-                        <div class="step-card">
-                            <div class="step-number">2</div>
-                            <h3>UPLOAD SWING VIDEO</h3>
-                            <p>Record your swing from multiple angles following our detailed guidelines</p>
-                        </div>
-                        <div class="step-card">
-                            <div class="step-number">3</div>
-                            <h3>EXPERT ANALYSIS</h3>
-                            <p>Our master fitter analyzes your swing and current equipment performance</p>
-                        </div>
-                        <div class="step-card">
-                            <div class="step-number">4</div>
-                            <h3>CUSTOM RECOMMENDATIONS</h3>
-                            <p>Receive detailed club specifications and recommendations via email</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Live Google Reviews -->
-    <section id="google-reviews" class="reviews-live">
-        <div class="container">
-            <h2 class="section-title">WHAT CLIENTS SAY</h2>
-            <div id="reviews-grid" class="reviews-grid" aria-live="polite"></div>
-            <div class="reviews-cta">
-                <a id="reviews-google-link" href="#" target="_blank" rel="noopener" class="google-link">See all reviews on Google</a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Fitter Bio Section -->
-    <section class="fitter-bio">
-        <div class="container">
-            <div class="bio-content">
-                <div class="bio-text">
-                    <h2 class="section-title">MEET YOUR FITTER</h2>
-                    <h3>Professional Club Fitting Expert</h3>
-                    <p>With over 20 years of experience in golf club fitting and swing analysis, our expert fitter has helped hundreds of golfers optimize their equipment for peak performance. Specializing in data-driven fitting methodologies and swing biomechanics, we ensure every recommendation is tailored to your unique swing characteristics and playing style.</p>
-                    <div class="credentials">
-                        <div class="credential-item">
-                            <strong>Certified:</strong> Master Club Fitter
-                        </div>
-                        <div class="credential-item">
-                            <strong>Experience:</strong> 500+ Successful Fittings
-                        </div>
-                        <div class="credential-item">
-                            <strong>Specialty:</strong> Driver & Iron Optimization
-                        </div>
-                    </div>
-                </div>
-                <div class="bio-image">
-                    <img src="fitter.jpg" alt="Professional Golf Fitter" class="fitter-photo">
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Remote Fitting Form -->
-    <section class="fitting-form-section">
-        <div class="container">
-            <div class="form-header">
-                <h2 class="section-title">START YOUR REMOTE FITTING</h2>
-                <p class="form-description">Complete the form below to begin your professional remote fitting experience</p>
-            </div>
-            
-            <form class="remote-fitting-form">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="name">Full Name *</label>
-                        <input type="text" id="name" name="name" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="email">Email Address *</label>
-                        <input type="email" id="email" name="email" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="phone">Phone Number</label>
-                        <input type="tel" id="phone" name="phone">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="handicap">Current Handicap</label>
-                        <select id="handicap" name="handicap">
-                            <option value="">Select handicap range</option>
-                            <option value="scratch-5">Scratch to 5</option>
-                            <option value="6-15">6 to 15</option>
-                            <option value="16-25">16 to 25</option>
-                            <option value="26+">26+</option>
-                            <option value="beginner">Beginner</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group full-width">
-                        <label for="current-clubs">Current Clubs (Brand/Model)</label>
-                        <textarea id="current-clubs" name="current-clubs" rows="3" placeholder="e.g., Driver: TaylorMade SIM2, Irons: Callaway Rogue, etc."></textarea>
-                    </div>
-                    
-                    <div class="form-group full-width">
-                        <label for="goals">Fitting Goals</label>
-                        <textarea id="goals" name="goals" rows="3" placeholder="What do you hope to achieve with this fitting? (e.g., increase distance, improve accuracy, etc.)"></textarea>
-                    </div>
-                </div>
-                
-                <div class="video-upload-section">
-                    <h3>Swing Video Upload *</h3>
-                    <p class="upload-instructions">Please upload a video of your swing from down-the-line angle. Video should be clear and show your full swing.</p>
-                    <div class="upload-area">
-                        <input type="file" id="video" name="video" accept="video/*" required>
-                        <label for="video" class="upload-label">
-                            <span class="upload-icon">📹</span>
-                            <span class="upload-text">Choose Video File</span>
-                        </label>
-                    </div>
-                </div>
-                
-                <button type="submit" class="submit-btn">SUBMIT FOR ANALYSIS</button>
-            </form>
-        </div>
-    </section>
-    <footer>
-        <p>&copy; 2025 GolfMax - All Rights Reserved</p>
+    <footer style="position:relative;z-index:1;">
+        <p>© <span id="year"></span> GolfMax. All rights reserved.</p>
     </footer>
+    <script src="vendor/three.min.js"></script>
+    <script src="sphere.js"></script>
+    <script>document.getElementById('year').textContent=new Date().getFullYear();</script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"6fc94f60986c48748038bb96a5a76806","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
-<script src="config.js?v=1"></script>
-<script src="reviews.js?v=1"></script>
 </html>

@@ -1,7 +1,7 @@
 Cloudflare Worker: Google Reviews Proxy
 
 What this does
-- Proxies the Google Places Details API to return a small JSON payload: { reviews:[…], url }
+- Proxies the Google Places Details API to return a small JSON payload: { reviews:[…], url, rating, user_ratings_total }
 - Filters to highly-rated recent reviews; caches at the edge for 12 hours
 - Adds CORS so your static site can fetch from the worker
 
@@ -42,3 +42,8 @@ Finding your Place ID
 Notes
 - Do not embed your API key in the frontend. Keep it as a Worker secret.
 - The Worker caches for 12 hours; you can purge by changing the URL (e.g., add ?t=timestamp) or by publishing a new version.
+
+Restricting CORS
+- Set a comma-separated list of allowed origins so only your site can call the Worker:
+  wrangler vars set ALLOWED_ORIGINS="https://your-site.tld,https://www.your-site.tld,http://localhost:8000"
+- Local development origins (http://localhost:8000, http://127.0.0.1:8000) are always allowed.

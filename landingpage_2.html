@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GolfMax Remote Fitting | Landing Page 2</title>
+    <meta name="description" content="GolfMax remote fitting – alternate landing page variant.">
+    <link rel="canonical" href="landingpage_2.html">
+    <meta name="theme-color" content="#000000">
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="GolfMax Remote Fitting | Landing Page 2">
+    <meta property="og:description" content="GolfMax remote fitting – alternate landing page variant.">
+    <meta property="og:image" content="logo.png">
+    <!-- <meta property="og:url" content="https://YOUR_DOMAIN/landingpage_2.html"> -->
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="GolfMax Remote Fitting | Landing Page 2">
+    <meta name="twitter:description" content="GolfMax remote fitting – alternate landing page variant.">
+    <meta name="twitter:image" content="logo.png">
+    <link rel="stylesheet" href="styles.css?v=7">
+</head>
+<body class="no-section-bg">
+    <style>
+      /* LP2-specific: hero rating badge + folder tabs */
+      .hero-section { position: relative; }
+      .hero-rating-badge { position:absolute; top:1.25rem; right:1.25rem; background:rgba(0,0,0,0.55); color:#fff; padding:10px 14px; border-radius:10px; font-weight:800; display:flex; align-items:center; gap:.5rem; box-shadow:0 8px 24px rgba(0,0,0,.25); backdrop-filter: blur(6px); }
+      .hero-rating-badge .rating-stars { color:#ffd700; letter-spacing:2px; font-size:14px; }
+      .hero-rating-badge .rating-text { font-size:14px; font-weight:700; opacity:0.95; }
+      .hero-rating-badge .rating-count { opacity:.8; font-weight:600; margin-left:2px; }
+      .hero-rating-badge a.rating-text { color:#fff; text-decoration:none; }
+      .hero-rating-badge a.rating-text:hover { text-decoration:underline; }
+
+      /* Tabs styled like manila folder tabs */
+      .lp2-tabbar { display:flex; gap:10px; padding:0 2rem 0.5rem; align-items:flex-end; }
+      .lp2-tab { position:relative; display:inline-block; padding:.75rem 1.1rem; background:linear-gradient(180deg,#fff,#f3f5f9); border:1px solid rgba(0,0,0,0.12); border-bottom:none; border-top-left-radius:10px; border-top-right-radius:10px; text-decoration:none; color:#111; font-weight:800; box-shadow:0 8px 18px rgba(0,0,0,0.08); transform: translateY(6px); transition: transform .2s ease, background .2s ease; }
+      .lp2-tab:hover { transform: translateY(2px); }
+      .lp2-tab.active { transform: translateY(0); background:linear-gradient(180deg,#fff,#e9edf6); }
+      .lp2-tab small { display:block; font-weight:600; opacity:.7; }
+      /* Decorative divider under tab strip */
+      .lp2-panels { border-top:1px solid rgba(0,0,0,0.12); }
+      /* One-column layout when video section is removed */
+      .video-process-grid.onecol { grid-template-columns: 1fr; }
+    </style>
+    <!-- 3D Background Sphere -->
+    <div id="bg3d" aria-hidden="true">
+        <canvas id="bg3d-canvas"></canvas>
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-menu">
+                <button class="menu-trigger" aria-haspopup="true" aria-expanded="false">Menu ▾</button>
+                <div class="menu-dropdown" role="menu">
+                    <a href="#how-to" class="menu-item" role="menuitem">How to:</a>
+                    <a href="#google-reviews" class="menu-item" role="menuitem">Reviews</a>
+                    <a href="#fitter" class="menu-item" role="menuitem">Meet The Fitter</a>
+                    <a href="#form" class="menu-item" role="menuitem">Form</a>
+                </div>
+            </div>
+            <div class="nav-brand">
+                <a class="nav-logo-link" href="/landingpage_2.html" aria-label="FreeGolfFitting landing page">
+                    <img src="logo.png?v=3" alt="GolfMax Logo" class="nav-logo">
+                    <img src="ofs_free.png?v=3" alt="Free Online Fitting Service" class="nav-ofs" onerror="this.style.display='none'">
+                </a>
+            </div>
+            <a href="https://www.thegolfmax.com" class="shop-btn" target="_blank">SHOP</a>
+        </div>
+    </nav>
+
+    <!-- Scrolling Reviews Banner -->
+    <div class="reviews-banner">
+        <div class="reviews-scroll" id="reviews-ticker"></div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title">REMOTE FITTING</h1>
+            <p class="hero-subtitle">Get professionally fitted from anywhere in the world</p>
+            <p style="margin-top:1rem;">
+                <a href="index.html" class="globe-btn">Back to Main</a>
+            </p>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <span class="stat-number">500+</span>
+                    <span class="stat-label">Successful Fittings</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">20+</span>
+                    <span class="stat-label">Years Experience</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">95%</span>
+                    <span class="stat-label">Client Satisfaction</span>
+                </div>
+            </div>
+        </div>
+        <!-- Live Google Rating Badge -->
+        <div class="hero-rating-badge" id="hero-rating-badge" aria-live="polite" title="Average Google rating">
+          <span class="rating-stars">★★★★★</span>
+          <a id="lp2-google-link" class="rating-text" href="#" target="_blank" rel="noopener">
+            <span id="lp2-rating-value">–</span> on Google <span class="rating-count" id="lp2-rating-count"></span>
+          </a>
+        </div>
+    </section>
+
+    <!-- Side-by-Side Showcase Navigation -->
+    <section class="showcase-nav" aria-label="Section Buttons">
+        <div class="lp2-tabbar" role="tablist">
+            <a class="lp2-tab" href="#how-to"><small>Info</small>How It Works</a>
+            <a class="lp2-tab" href="#google-reviews"><small>Social</small>Reviews</a>
+            <a class="lp2-tab" href="#form"><small>Action</small>Start Fitting</a>
+        </div>
+        <div class="lp2-panels"></div>
+    </section>
+
+    <!-- Video and How It Works Section -->
+    <section class="video-process-section" id="how-to">
+        <div class="container">
+            <div class="video-process-grid onecol">
+                <div class="how-it-works">
+                    <h2 class="section-title">HOW IT WORKS</h2>
+                    <div class="steps-grid">
+                        <div class="step-card"><div class="step-number">1</div><h3>SUBMIT YOUR INFO</h3><p>Fill out our comprehensive fitting form with your current specs and goals</p></div>
+                        <div class="step-card"><div class="step-number">2</div><h3>UPLOAD SWING VIDEO</h3><p>Record your swing from multiple angles following our detailed guidelines</p></div>
+                        <div class="step-card"><div class="step-number">3</div><h3>EXPERT ANALYSIS</h3><p>Our master fitter analyzes your swing and current equipment performance</p></div>
+                        <div class="step-card"><div class="step-number">4</div><h3>CUSTOM RECOMMENDATIONS</h3><p>Receive detailed club specifications and recommendations via email</p></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Live Google Reviews -->
+    <section id="google-reviews" class="reviews-live">
+        <div class="container">
+            <h2 class="section-title">WHAT CLIENTS SAY</h2>
+            <p class="reviews-attrib">Powered by Google • <a id="reviews-google-link" href="#" target="_blank" rel="noopener" class="google-link">See all reviews on Google</a></p>
+            <div id="reviews-grid" class="reviews-grid" aria-live="polite"></div>
+        </div>
+    </section>
+
+    <!-- Fitter Bio Section -->
+    <section class="fitter-bio" id="fitter">
+        <div class="container">
+            <div class="bio-content">
+                <div class="bio-text">
+                    <h2 class="section-title">MEET YOUR FITTER</h2>
+                    <h3>Professional Club Fitting Expert</h3>
+                    <p>With over 20 years of experience in golf club fitting and swing analysis, our expert fitter has helped hundreds of golfers optimize their equipment for peak performance. Specializing in data-driven fitting methodologies and swing biomechanics, we ensure every recommendation is tailored to your unique swing characteristics and playing style.</p>
+                    <div class="credentials">
+                        <div class="credential-item"><strong>Certified:</strong> Master Club Fitter</div>
+                        <div class="credential-item"><strong>Experience:</strong> 500+ Successful Fittings</div>
+                        <div class="credential-item"><strong>Specialty:</strong> Driver & Iron Optimization</div>
+                    </div>
+                </div>
+                <div class="bio-image">
+                    <img src="fitter.jpg" alt="Professional Golf Fitter" class="fitter-photo">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Remote Fitting Form -->
+    <section class="fitting-form-section" id="form">
+        <div class="container">
+            <div class="form-header">
+                <h2 class="section-title">START YOUR REMOTE FITTING</h2>
+                <p class="form-description">Complete the form below to begin your professional remote fitting experience</p>
+            </div>
+            <form class="remote-fitting-form">
+                <div class="form-grid">
+                    <div class="form-group"><label for="name">Full Name *</label><input type="text" id="name" name="name" required></div>
+                    <div class="form-group"><label for="email">Email Address *</label><input type="email" id="email" name="email" required></div>
+                    <div class="form-group"><label for="phone">Phone Number</label><input type="tel" id="phone" name="phone"></div>
+                    <div class="form-group"><label for="handicap">Current Handicap</label>
+                        <select id="handicap" name="handicap">
+                            <option value="">Select handicap range</option>
+                            <option value="scratch-5">Scratch to 5</option>
+                            <option value="6-15">6 to 15</option>
+                            <option value="16-25">16 to 25</option>
+                            <option value="26+">26+</option>
+                            <option value="beginner">Beginner</option>
+                        </select>
+                    </div>
+                    <div class="form-group full-width"><label for="current-clubs">Current Clubs (Brand/Model)</label><textarea id="current-clubs" name="current-clubs" rows="3" placeholder="e.g., Driver: TaylorMade SIM2, Irons: Callaway Rogue, etc."></textarea></div>
+                    <div class="form-group full-width"><label for="goals">Fitting Goals</label><textarea id="goals" name="goals" rows="3" placeholder="What do you hope to achieve with this fitting? (e.g., increase distance, improve accuracy, etc.)"></textarea></div>
+                </div>
+                <div class="video-upload-section">
+                    <h3>Swing Video Upload *</h3>
+                    <p class="upload-instructions">Please upload a video of your swing from down-the-line angle. Video should be clear and show your full swing.</p>
+                    <div class="upload-area">
+                        <input type="file" id="video" name="video" accept="video/*" required>
+                        <label for="video" class="upload-label"><span class="upload-icon">📹</span><span class="upload-text">Choose Video File</span></label>
+                    </div>
+                </div>
+                <button type="submit" class="submit-btn">SUBMIT FOR ANALYSIS</button>
+            </form>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 GolfMax - All Rights Reserved</p>
+    </footer>
+
+    <script>window.GM_OVERLAY_TEXT = false;</script>
+    <script>
+      // Force real reviews on this page: set Place ID and disable local mocks.
+      window.GM_PLACE_ID = 'ChIJO8L3QtwU6YARnGKftpsMyfo';
+      window.GM_DISABLE_MOCKS = true;
+      (function(){
+        try{
+          if (location.hostname.endsWith('.pages.dev')) {
+            // TEMP: enable direct fetch for preview; do NOT use in production
+            window.GM_DIRECT_GOOGLE_KEY = 'AIzaSyAArmlcYhCdVE6r9-14wNQhf5DXOnjOOVA';
+          }
+        } catch {}
+      })();
+    </script>
+    <script src="config.js?v=1"></script>
+    <script src="vendor/three.min.js"></script>
+    <script src="sphere.js?v=1"></script>
+    <script src="reviews.js?v=1"></script>
+    <script src="editmode.js?v=1"></script>
+    <script>
+      // LP2 wiring: live rating badge + smooth scroll with navbar offset
+      (function(){
+        function stars(n){ const s = Math.round(n || 0); return '★★★★★'.slice(0,s) + '☆☆☆☆☆'.slice(0,5-s); }
+        function updateRating(meta){
+          try{
+            const badge = document.getElementById('hero-rating-badge');
+            if (!badge) return;
+            const v = (meta && typeof meta.rating === 'number') ? meta.rating : undefined;
+            const c = (meta && typeof meta.total === 'number') ? meta.total : undefined;
+            if (v){
+              badge.querySelector('.rating-stars').textContent = stars(v);
+              document.getElementById('lp2-rating-value').textContent = v.toFixed(1) + '★';
+              document.getElementById('lp2-rating-count').textContent = (c? '('+c+')' : '');
+            } else {
+              document.getElementById('lp2-rating-value').textContent = '4.9★';
+            }
+            // Link hero badge to the Google listing
+            try{
+              var href = (window.GM_REVIEWS_META && window.GM_REVIEWS_META.url) || (window.GM_GOOGLE_URL) || '#';
+              var a = document.getElementById('lp2-google-link');
+              if (a && href) a.href = href;
+            } catch {}
+          } catch {}
+        }
+        if (window.GM_REVIEWS_META) updateRating(window.GM_REVIEWS_META);
+        window.addEventListener('gm-reviews-loaded', (e)=> updateRating(e.detail || {}));
+        // Smooth scroll with header offset
+        function scrollToHash(hash){
+          const id = (hash||'').replace('#','');
+          const el = document.getElementById(id);
+          if (!el) return;
+          const nav = document.querySelector('.navbar');
+          const offset = nav ? nav.getBoundingClientRect().height : 0;
+          const top = el.getBoundingClientRect().top + window.pageYOffset - (offset + 12);
+          window.scrollTo({ top, behavior: 'smooth' });
+        }
+        document.querySelectorAll('.lp2-tabbar a[href^="#"]').forEach(a => {
+          a.addEventListener('click', (e) => {
+            e.preventDefault();
+            const href = a.getAttribute('href');
+            try { history.replaceState(null,'',href); } catch {}
+            scrollToHash(href);
+          });
+        });
+        if (location.hash) setTimeout(()=>scrollToHash(location.hash), 50);
+      })();
+    </script>
+</body>
+</html>

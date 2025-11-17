@@ -1,0 +1,5 @@
+# Allow everything by default
+User-agent: *
+Allow: /
+
+Sitemap: https://freegolffitting.com/sitemap.xml
