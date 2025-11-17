@@ -168,6 +168,7 @@
         payload.texts[key] = el.innerHTML;
       });
       localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+      return payload;
     } catch {}
   }
 

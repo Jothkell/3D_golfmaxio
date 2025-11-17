@@ -1,3 +1,4 @@
+# Allow everything by default
 User-agent: *
 Allow: /
 

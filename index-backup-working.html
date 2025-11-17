@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GolfMax Remote Fitting | Coming Soon</title>
+  <meta name="robots" content="noindex">
+  <link rel="stylesheet" href="styles.css?v=5">
+  <style>
+    body{margin:0;min-height:100vh;background:#0a0a0a url('./background.png') repeat;color:#f6f7f9;font-family:'Work Sans',Arial,sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2.5rem;position:relative;overflow:hidden}
+    .panel{max-width:620px;background:rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.08);border-radius:24px;padding:3rem 2.5rem;box-shadow:0 25px 60px rgba(0,0,0,0.45);position:relative;z-index:1}
+    .panel h1{margin:0 0 1.25rem;font-size:clamp(2.5rem,5vw,4rem);letter-spacing:0.12em}
+    .panel p{margin:0 0 1rem;color:rgba(246,247,249,0.85)}
+    .panel a{display:inline-block;margin-top:1.5rem;padding:0.85rem 1.8rem;background:#f6f7f9;color:#0a0a0a;text-decoration:none;font-weight:700;border:2px solid #f6f7f9;transition:all .3s}
+    .panel a:hover{background:transparent;color:#f6f7f9}
+    footer{margin-top:2rem;color:rgba(246,247,249,0.65);position:relative;z-index:1}
+    .secret-link{display:inline-block;border-radius:16px}
+    .secret-link:focus-visible{outline:2px dashed rgba(255,255,255,0.6);outline-offset:4px}
+  </style>
+</head>
+<body>
+  <div id="bg3d" aria-hidden="true">
+    <canvas id="bg3d-canvas"></canvas>
+  </div>
+  <div class="panel">
+    <a href="/landingpage_3.html" class="secret-link" aria-label="Open GolfMax preview">
+      <img src="logo.png?v=3" alt="GolfMax Logo" style="height:80px;margin-bottom:1.5rem;">
+    </a>
+    <h1>COMING&nbsp;SOON</h1>
+    <p>The GolfMax remote fitting site is under active development.</p>
+    <p>For fittings, scheduling, and gear, please visit our main GolfMax experience.</p>
+    <a href="https://www.thegolfmax.com" target="_blank" rel="noopener">Visit GolfMax.com</a>
+  </div>
+  <footer>© <span id="year"></span> GolfMax. All rights reserved.</footer>
+  <script src="vendor/three.min.js"></script>
+  <script src="sphere.js"></script>
+  <script>document.getElementById('year').textContent=new Date().getFullYear();</script>
+</body>
+</html>

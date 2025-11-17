@@ -5,7 +5,9 @@ compatibility_date = "2024-10-01"
 # Deploy to your zone routes (top-level, not under [vars])
 routes = [
   { pattern = "freegolffitting.com/api/reviews*", zone_name = "freegolffitting.com" },
-  { pattern = "www.freegolffitting.com/api/reviews*", zone_name = "freegolffitting.com" }
+  { pattern = "freegolffitting.com/api/upload*", zone_name = "freegolffitting.com" },
+  { pattern = "www.freegolffitting.com/api/reviews*", zone_name = "freegolffitting.com" },
+  { pattern = "www.freegolffitting.com/api/upload*", zone_name = "freegolffitting.com" }
 ]
 
 [vars]
@@ -13,3 +15,11 @@ routes = [
 # GOOGLE_API_KEY is a secret set via `wrangler secret put GOOGLE_API_KEY`
 ALLOWED_ORIGINS = "https://freegolffitting.com,https://www.freegolffitting.com,https://freegolffitting.pages.dev"
 PLACE_ID = "ChIJO8L3QtwU6YARnGKftpsMyfo"
+UPLOAD_NOTIFY_TO = "golfmaxbusiness@gmail.com,jothkell3@gmail.com"
+UPLOAD_NOTIFY_FROM = "no-reply@freegolffitting.com"
+UPLOAD_NOTIFY_FROM_NAME = "GolfMax Remote Fitting"
+UPLOAD_NOTIFY_SUBJECT = "New remote fitting submission"
+
+[[r2_buckets]]
+binding = "VIDEO_UPLOADS"
+bucket_name = "videouploads"

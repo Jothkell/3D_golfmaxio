@@ -1,22 +1,25 @@
-# GolfMax Remote Fitting
+# FreeGolfFitting by GolfMax
 
-Modernized marketing site and intake flow for GolfMax’s remote fitting program, bringing live Google reviews, detailed process copy, and swing-video uploads into a single experience.
+Production marketing site and remote fitting intake for GolfMax. The new homepage at `/` sells the FreeGolfFitting offer while the `/start/` route hosts the full remote fitting workflow with live reviews, uploads, and fitter bio.
 
 ## Key Features
 
-- **Real Google social proof**: `/api/reviews` proxy (Cloudflare Worker / AWS Lambda) hydrates the review banner and grid with ratings ≥4, plus link-through attribution.
-- **Conversion-focused hero**: refreshed copy, primary CTA, and stats summarizing turnaround, volume, and golfer satisfaction.
-- **Process walkthrough**: embedded remote-fitting explainer video with supporting highlights and four-step guide.
-- **Fitter credibility**: updated biography for Alex Bollag with specialties, certifications, and validated experience.
-- **Remote fitting intake**: fully wired form that validates swing uploads, tracks progress, and sends submissions to durable storage.
+- **Launch-ready marketing page (`index.html`)**: clear value prop, pricing, testimonials, and CTA routing golfers to the intake flow.
+- **Remote fitting intake (`/start/`)**: detailed process narrative, bio, and fully wired upload form powered by Cloudflare R2.
+- **Real Google social proof**: `/api/reviews` proxy (Cloudflare Worker / AWS Lambda) hydrates both hero metrics and reviews grid with ratings ≥4.
+- **Reusable upload pipeline**: shared handler streams swing videos into durable storage, emits signed links, and supports optional webhooks/email alerts.
 
 ## File Map
 
-- `index.html` — production landing page.
-- `styles.css` — global site styles (four-space indentation, no preprocessor).
+- `index.html` — FreeGolfFitting marketing page (production entry point).
+- `launch.css` — design system for the marketing page.
+- `start/index.html` — remote fitting experience (formerly `remote-preview.html`).
+- `styles.css` — shared styles for the remote fitting experience and legacy variants.
+- `assets/` — marketing imagery (hero, SVG logo).
 - `reviews.js` — front-end hydration for Google reviews grid and ticker.
 - `form.js` — handles form validation, upload progress, and UI feedback.
 - `config.js` — runtime configuration (endpoints, place ID, upload URL).
+- `analytics.js` — lazy GA4 loader and conversion tracking for CTAs + form success.
 - `functions/api/reviews.js` — Cloudflare Pages Function proxying Google Places.
 - `functions/api/upload.js` — Cloudflare Pages Function for swing uploads.
 - `cloudflare/worker.js` — shared Worker for production reviews + uploads.
@@ -30,7 +33,7 @@ Modernized marketing site and intake flow for GolfMax’s remote fitting program
    ```bash
    python3 -m http.server 8080
    ```
-   Opens http://localhost:8080 — background animation, reviews ticker, and form render.
+   Opens http://localhost:8080 — homepage lives at `/`, remote fitting flow at `/start/`.
 
 2. **Mock reviews API**
    ```bash
@@ -64,20 +67,23 @@ Modernized marketing site and intake flow for GolfMax’s remote fitting program
   - `UPLOAD_WEBHOOK_URL` — optional webhook for back-office notifications.
 - **Email notifications** (optional): supply SendGrid credentials to email the fitting desk on each submission:
   - `SENDGRID_API_KEY`
-  - `UPLOAD_NOTIFY_TO`
-  - `UPLOAD_NOTIFY_FROM` (defaults to `UPLOAD_NOTIFY_TO` if omitted)
+  - `UPLOAD_NOTIFY_TO` (comma-separated list supported)
+  - `UPLOAD_NOTIFY_FROM` (defaults to first `UPLOAD_NOTIFY_TO` address if omitted)
   - `UPLOAD_NOTIFY_FROM_NAME`
   - `UPLOAD_NOTIFY_SUBJECT`
+  - `UPLOAD_NOTIFY_LINK_TTL` (optional, seconds until signed download links expire; default 86400)
+- **Analytics**: set `GA_MEASUREMENT_ID` in `aws/config.json` (or environment-specific override) so `analytics.js` can load GA4 and attach event tracking.
 - **Runtime config**: `aws/config.json` (or generated equivalent) ships with the site and sets `REVIEWS_ENDPOINT`, `PLACE_ID`, `GOOGLE_URL`, and `UPLOAD_ENDPOINT`. Update during deployment and run `bash scripts/build_public.sh`.
 - **CORS**: Cloudflare worker accepts origins defined via `ALLOWED_ORIGINS`. In production set to your canonical domain(s).
-- **Sitemaps/robots**: update `sitemap.xml` with the final origin; `robots.txt` is ready for launch.
+- **Sitemaps/robots**: currently point at `https://freegolffitting.com/`; update both files if the production hostname changes.
 
 ## QA Checklist
 
 - Reviews grid and ticker populate with live Google data (or mock server).
 - Form rejects files >300 MB and unsupported MIME types, shows progress for valid uploads.
 - Upload handler stores the video object plus metadata JSON in R2 and returns `{ ok: true }`.
-- Responsive layout holds on tablet and mobile (focus on hero CTAs, video sticky behavior, and form inputs).
+- Responsive layout holds on tablet and mobile (homepage hero/CTA plus `/start/` sticky video + form inputs).
+- GA4 events fire for homepage CTAs and successful form submissions (check in DebugView when possible).
 
 ## Future Enhancements
 

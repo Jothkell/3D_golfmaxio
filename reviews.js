@@ -11,7 +11,14 @@
   const directKey = window.GM_GOOGLE_API_KEY || window.GM_DIRECT_GOOGLE_KEY || null; // dev-only
   const grid = document.getElementById('reviews-grid');
   const link = document.getElementById('reviews-google-link');
-  if (!grid) return;
+  const tickerTarget = document.getElementById('reviews-ticker');
+  if (!grid && !tickerTarget) return;
+
+  const positiveKeywords = [
+    'great','amazing','excellent','helpful','helped','love','loved','friendly','professional',
+    'best','fantastic','awesome','perfect','highly','recommend','knowledgeable','patient',
+    'incredible','outstanding','top-notch','phenomenal','efficient','quick','super'
+  ];
 
   function stars(n){
     const s = Math.round(n);
@@ -28,9 +35,34 @@
     return `${first} ${lastInitial}.`;
   }
 
-  function snippet(text, max = 140){
+  function escapeHtml(value) {
+    if (value === null || value === undefined) return '';
+    return String(value)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  function selectHighlight(text) {
     if (!text) return '';
-    const stripped = String(text).replace(/\s+/g, ' ').trim();
+    const normalized = String(text).replace(/\s+/g, ' ').trim();
+    if (!normalized) return '';
+    const sentences = normalized
+      .split(/(?<=[.!?])\s+/)
+      .map(s => s.trim())
+      .filter(Boolean);
+    if (!sentences.length) return normalized;
+    const positive = sentences.find(sentence => {
+      const lower = sentence.toLowerCase();
+      return positiveKeywords.some(keyword => lower.includes(keyword));
+    });
+    return positive || sentences[0] || normalized;
+  }
+
+  function snippet(text, max = 140){
+    const highlight = selectHighlight(text);
+    const stripped = (highlight || String(text || '')).replace(/\s+/g, ' ').trim();
+    if (!stripped) return '';
     if (stripped.length <= max) return stripped;
     const truncated = stripped.slice(0, max);
     const lastSpace = truncated.lastIndexOf(' ');
@@ -38,8 +70,30 @@
     return `${result}…`;
   }
 
+  function formatTickerSnippet(text) {
+    const maxChars = 33;
+    const highlight = selectHighlight(text);
+    const stripped = (highlight || String(text || '')).replace(/\s+/g, ' ').trim();
+    if (!stripped) return '';
+    const words = stripped.split(' ');
+    const lines = [];
+    let current = '';
+    for (const word of words) {
+      const candidate = current ? `${current} ${word}` : word;
+      if (candidate.length > maxChars && current) {
+        lines.push(current);
+        current = word;
+      } else {
+        current = candidate;
+      }
+    }
+    if (current) lines.push(current);
+    if (!lines.length) return escapeHtml(stripped);
+    return lines.map(segment => escapeHtml(segment)).join('<br>');
+  }
+
   function render(reviews, listingUrl, avgRating, totalCount){
-    grid.innerHTML = '';
+    if (grid) grid.innerHTML = '';
     const all = Array.isArray(reviews) ? reviews : [];
     // Compute average if not provided
     const computedAvg = (typeof avgRating === 'number' && !Number.isNaN(avgRating))
@@ -52,39 +106,41 @@
       .sort((a,b) => (b.time || 0) - (a.time || 0))
       .slice(0, 12);
 
-    for (const r of items){
-      const card = document.createElement('div');
-      card.className = 'review-card';
-      card.innerHTML = `
-        <div class="review-header">
-          <img class="review-avatar" src="${r.profile_photo_url || ''}" alt="${r.author_name || 'Reviewer'}" onerror="this.style.visibility='hidden'">
-          <div>
-            <div class="review-name">${r.author_name || 'Google User'}</div>
-            <div class="review-stars" aria-label="${r.rating} star rating">${stars(r.rating || 5)}</div>
+    if (grid){
+      for (const r of items){
+        const card = document.createElement('div');
+        card.className = 'review-card';
+        const safeBody = escapeHtml(r.text || '');
+        card.innerHTML = `
+          <div class="review-header">
+            <img class="review-avatar" src="${r.profile_photo_url || ''}" alt="${r.author_name || 'Reviewer'}" onerror="this.style.visibility='hidden'">
+            <div>
+              <div class="review-name">${r.author_name || 'Google User'}</div>
+              <div class="review-stars" aria-label="${r.rating} star rating">${stars(r.rating || 5)}</div>
+            </div>
           </div>
-        </div>
-        <div class="review-text">${(r.text || '').replace(/</g,'&lt;')}</div>
-        <div class="review-time">${r.relative_time_description || ''}</div>
-      `;
-      grid.appendChild(card);
+          <div class="review-text">${safeBody}</div>
+          <div class="review-time">${r.relative_time_description || ''}</div>
+        `;
+        grid.appendChild(card);
+      }
     }
     if (link){ link.href = listingUrl || GOOGLE_URL || '#'; }
 
     // Also populate the top scrolling banner with snippets
-    const ticker = document.getElementById('reviews-ticker');
-    if (ticker){
+    if (tickerTarget){
       const mkItem = (rev) => {
-        const safe = (rev.text || '').replace(/</g,'&lt;');
+        const formatted = formatTickerSnippet(rev.text);
         return `
         <div class="review-item">
           <div class="stars" aria-hidden="true">${stars(rev.rating || 5)}</div>
-          <div class="review-snippet">“${snippet(safe)}”</div>
+          <div class="review-snippet">“${formatted}”</div>
           <div class="review-author">${authorLabel(rev.author_name)}</div>
         </div>`;
       };
       const seq = items.map(mkItem).join('');
       // duplicate once for seamless scrolling illusion
-      ticker.innerHTML = seq + seq;
+      tickerTarget.innerHTML = seq + seq;
     }
 
     const metaBar = document.getElementById('reviews-meta');

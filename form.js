@@ -97,6 +97,9 @@
             form.reset();
             updateFileLabel();
             setStatus('success', 'Thanks! Your swing video and fitting details are on their way. We\'ll reach out within one business day.');
+            try {
+                window.dispatchEvent(new CustomEvent('gm-form-success'));
+            } catch {}
         } catch (err) {
             setStatus('error', err.message || 'Upload failed. Please try again.');
         } finally {

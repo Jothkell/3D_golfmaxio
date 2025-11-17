@@ -3,7 +3,7 @@
 This document captures the current state, live links, and the exact next actions so a new engineer (or future Codex run) can continue seamlessly.
 
 ## TL;DR — What’s Working Now
-- Production-ready remote fitting LP with live copy, process overview, and intake form lives in `index.html`.
+- Marketing homepage lives at `index.html`; remote fitting intake flow is routed through `/start/`.
 - Reviews integration pulls fresh Google Places data (rating ≥4) via Worker/Pages Function/Lambda.
 - Swing video uploads post to `/api/upload`, stream into R2, and write metadata JSON.
 - Cloudflare Worker (`golfmax-reviews`) serves both `/api/reviews` and `/api/upload`; Pages Function equivalents live in `functions/api/`.
@@ -12,7 +12,9 @@ This document captures the current state, live links, and the exact next actions
 - AWS SAM stack `golfmax-reviews` deployed in `us-west-2`; API Gateway endpoint `https://6bqg4174x8.execute-api.us-west-2.amazonaws.com/api/reviews` currently used by `/aws/config.json`.
 
 ## Key Paths
-- Frontend entry: `index.html`; alt experiences remain under `landingpage_2.html`, `globe.html`, etc.
+- Marketing homepage: `index.html` (see `launch.css` + assets under `/assets`).
+- Remote fitting flow: `start/index.html` (redirect available via `remote-preview.html`).
+- Legacy alt experiences remain under `landingpage_2.html`, `globe.html`, etc.
 - Reviews hydration: `reviews.js` (awaits `GM_CONFIG_READY` for runtime overrides).
 - Intake UX: `form.js` (progress + validation) with supporting styles in `styles.css`.
 - Runtime config loader: `config.js`.
@@ -36,9 +38,9 @@ This document captures the current state, live links, and the exact next actions
   - Optional `UPLOAD_MAX_MB` (default 300) and `UPLOAD_WEBHOOK_URL` for notifications.
 - **Email alerts (optional)**:
   - Configure SendGrid (or compatible API) via `SENDGRID_API_KEY`.
-  - Set `UPLOAD_NOTIFY_TO` (and optionally `UPLOAD_NOTIFY_FROM`, `UPLOAD_NOTIFY_FROM_NAME`, `UPLOAD_NOTIFY_SUBJECT`) so each intake generates an email.
+  - Set `UPLOAD_NOTIFY_TO` (comma-separated list supported) and optionally `UPLOAD_NOTIFY_FROM`, `UPLOAD_NOTIFY_FROM_NAME`, `UPLOAD_NOTIFY_SUBJECT`, `UPLOAD_NOTIFY_LINK_TTL` so each intake generates an email with signed download links.
 - **Allowed origins**: Worker env `ALLOWED_ORIGINS` for CORS (comma-separated).
-- `/aws/config.json`: defines `REVIEWS_ENDPOINT`, `PLACE_ID`, `GOOGLE_URL`, `UPLOAD_ENDPOINT`.
+- `/aws/config.json`: defines `REVIEWS_ENDPOINT`, `PLACE_ID`, `GOOGLE_URL`, `UPLOAD_ENDPOINT`, `GA_MEASUREMENT_ID`.
 
 ## What’s Pending (needs account access)
 1. **Cloudflare**
@@ -91,14 +93,18 @@ Update `REVIEWS_ENDPOINT` (and `UPLOAD_ENDPOINT` if the upload handler lives els
 - Reviews are filtered server + client side for rating ≥4 and capped at 12; ticker duplicates the set for seamless scroll.
 - Upload handler enforces required `name`, `email`, and `video` fields; rejects files > `UPLOAD_MAX_MB`.
 - Landing Page 2 still disables mock fallback and remains a lightweight preview variant (update copy later if needed).
+- Marketing homepage pulls imagery from `/assets` and styles from `launch.css`.
+- `/remote-preview.html` now redirects to `/start/`; update the intake flow directly in `start/index.html`.
+- `analytics.js` lazily loads GA4 when `GA_MEASUREMENT_ID` is present and logs CTA clicks plus successful intake submissions.
 
 ## Verification Checklist
-- `python3 -m http.server 8080` → confirm hero copy, process steps, bio, and form render properly.
+- `python3 -m http.server 8080` → confirm homepage renders correctly and `/start/` loads hero copy, process steps, bio, and form.
 - Reviews: ensure `/api/reviews` returns 200 and populates both ticker (`#reviews-ticker`) and cards (`#reviews-grid`).
 - Upload: submit a <100 MB test video; expect `{ ok: true, objectKey: ... }` and new objects in R2 (`videos/<timestamp>_<slug>.ext` plus JSON metadata).
 - `/aws/config.json` served with correct cache headers and values (no browser caching issues due to `no-store` fetch).
 - Mobile: verify hero CTA stack, sticky video behavior, and form spacing ≤768px.
-- SEO: update `sitemap.xml` origin and flip `robots.txt` to allow indexing when ready.
+- SEO: confirm `robots.txt` and `sitemap.xml` serve the correct origin; update if domains change.
+- Analytics: with GA DebugView, confirm homepage CTA clicks and `/start/` submission fire `select_content` and `generate_lead` events once GA4 is configured.
 
 ## Contact Points for the Next Engineer
 - If Cloudflare Worker returns errors, run `npx wrangler tail golfmax-reviews` in `cloudflare/`.
@@ -108,6 +114,11 @@ Update `REVIEWS_ENDPOINT` (and `UPLOAD_ENDPOINT` if the upload handler lives els
 ---
 This handoff was written to be the single source of truth for next steps. Prefer updating this file if deployment choices change (Cloudflare-only vs AWS).
 
+## Session Notes — 2025-11-04
+- Swapped the coming-soon shell for the launch marketing page (`index.html` + `launch.css`), wiring CTA traffic to `/start/`.
+- Moved the full remote fitting experience to `start/index.html` and added a redirect at `/remote-preview.html`.
+- Opened `robots.txt`, refreshed `sitemap.xml`, and taught `build_public.sh` to ship `/assets`, `launch.css`, and the `/start/` directory.
+
 ## Session Notes — 2025-10-28
 - Restored public landing to the coming-soon shell (`index.html`), keeping the full remote-fitting experience at `remote-preview.html` for future iterations.
 - Deployed today's review pipeline changes: Cloudflare Worker, Pages Function, and AWS Lambda now return 4+ star Google Places reviews; frontend ticker shows first-name/initial plus clipped quote.
@@ -115,4 +126,4 @@ This handoff was written to be the single source of truth for next steps. Prefer
 - Alex Bollag copy + imagery now live after S3 sync and CloudFront invalidations (`E3O6C05H4ST9HA`). Current invalidation IDs: `I40MTXRAS3NAKTUC3BOC6P1DIU` and `I3F9J03QKDEBKHXFNQCYRHXYKY` (both kicked today).
 - Production bundle built via `scripts/build_public.sh` and synced to `s3://freegolffitting-site`; ensure to rerun this before edits go live.
 - Google Places API key stored in Cloudflare secret `GOOGLE_API_KEY`; DNS proxied through Cloudflare (both apex & www) so `/api/reviews` Worker is active.
-- To preview the new layout without flipping prod, open `/remote-preview.html`. Update it in tandem with `index.html` when removing the coming-soon gate.
+- Historical note: `/remote-preview.html` previously hosted the full layout before today's `/start/` move.

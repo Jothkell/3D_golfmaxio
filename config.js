@@ -30,6 +30,7 @@ window.GM_CONFIG_READY = (async () => {
       if (data.PLACE_ID) window.GM_PLACE_ID = data.PLACE_ID;
       if (data.GOOGLE_URL) window.GM_GOOGLE_URL = data.GOOGLE_URL;
       if (data.UPLOAD_ENDPOINT) window.GM_UPLOAD_ENDPOINT = data.UPLOAD_ENDPOINT;
+      if (data.GA_MEASUREMENT_ID) window.GA_MEASUREMENT_ID = data.GA_MEASUREMENT_ID;
     }
   } catch {}
 })();
@@ -58,5 +59,8 @@ try {
   // If we have a Place ID, set a reliable Google listing URL via query_place_id
   if (window.GM_PLACE_ID) {
     window.GM_GOOGLE_URL = 'https://www.google.com/maps/search/?api=1&query_place_id=' + encodeURIComponent(window.GM_PLACE_ID);
+  }
+  if (!window.GA_MEASUREMENT_ID && window.GM_GA_MEASUREMENT_ID) {
+    window.GA_MEASUREMENT_ID = window.GM_GA_MEASUREMENT_ID;
   }
 } catch {}

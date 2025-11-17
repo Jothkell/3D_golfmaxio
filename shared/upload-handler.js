@@ -16,6 +16,7 @@ const DEFAULT_ALLOWED_TYPES = [
   'video/mov',
   'video/x-m4v'
 ];
+const DEFAULT_SIGNED_TTL_SECONDS = 24 * 60 * 60; // 24 hours
 
 export async function handleUploadRequest(request, env, opts = {}) {
   if (!env || typeof env !== 'object') {
@@ -78,11 +79,17 @@ export async function handleUploadRequest(request, env, opts = {}) {
     return jsonResponse({ error: 'storage_write_failed', message: sanitizeError(err) }, 500, opts.corsHeaders);
   }
 
+  const signedLinks = await createSignedUrls(bucket, videoKey, metaKey, env);
   const payload = {
     ...fields,
     objectKey: videoKey,
+    metadataKey: metaKey,
     size: file.size,
     contentType: file.type || 'application/octet-stream',
+    signedVideoUrl: signedLinks.videoUrl,
+    signedMetadataUrl: signedLinks.metadataUrl,
+    signedUrlExpiresAt: signedLinks.expiresAt,
+    signedUrlTtlSeconds: signedLinks.ttlSeconds,
   };
 
   await notifyWebhook(env.UPLOAD_WEBHOOK_URL, payload);
@@ -196,10 +203,10 @@ export function jsonResponse(body, status = 200, corsHeaders) {
 
 async function notifyEmail(env, payload) {
   const apiKey = env.SENDGRID_API_KEY;
-  const to = env.UPLOAD_NOTIFY_TO;
-  if (!apiKey || !to) return;
+  const recipients = parseRecipientList(env.UPLOAD_NOTIFY_TO);
+  if (!apiKey || !recipients.length) return;
 
-  const from = env.UPLOAD_NOTIFY_FROM || to;
+  const from = env.UPLOAD_NOTIFY_FROM || recipients[0];
   const fromName = env.UPLOAD_NOTIFY_FROM_NAME || 'GolfMax Remote Fitting';
   const subject = env.UPLOAD_NOTIFY_SUBJECT || 'New GolfMax remote fitting submission';
   const text = buildEmailBody(payload);
@@ -212,7 +219,7 @@ async function notifyEmail(env, payload) {
         'content-type': 'application/json',
       },
       body: JSON.stringify({
-        personalizations: [{ to: [{ email: to }] }],
+        personalizations: [{ to: recipients.map(email => ({ email })) }],
         from: { email: from, name: fromName },
         subject,
         content: [{ type: 'text/plain', value: text }],
@@ -238,9 +245,13 @@ function buildEmailBody(payload) {
     payload['current-clubs'] ? `Current clubs:\n${payload['current-clubs']}` : null,
     payload.goals ? `Goals:\n${payload.goals}` : null,
     '',
-    `Stored object key: ${payload.objectKey || 'unknown'}`,
+    `Stored video key: ${payload.objectKey || 'unknown'}`,
+    payload.metadataKey ? `Metadata key: ${payload.metadataKey}` : null,
     `Video size: ${formatBytes(payload.size)}`,
     `Content-Type: ${payload.contentType || 'unknown'}`,
+    payload.signedVideoUrl ? `Download video: ${payload.signedVideoUrl}` : null,
+    payload.signedMetadataUrl ? `Download metadata: ${payload.signedMetadataUrl}` : null,
+    payload.signedUrlExpiresAt ? `Signed links expire: ${formatExpiry(payload.signedUrlExpiresAt, payload.signedUrlTtlSeconds)}` : null,
     '',
     'Retrieve the file from your R2 bucket or connected storage.',
   ].filter(Boolean);
@@ -276,4 +287,93 @@ function sanitizeError(err) {
   if (typeof err === 'string') return err.slice(0, 160);
   if (err?.message) return String(err.message).slice(0, 160);
   return String(err).slice(0, 160);
+}
+
+async function createSignedUrls(bucket, videoKey, metaKey, env) {
+  if (!bucket || typeof bucket.createSignedUrl !== 'function') return {};
+  const ttlSeconds = resolveSignedUrlTtl(env && env.UPLOAD_NOTIFY_LINK_TTL);
+  try {
+    const [videoSigned, metaSigned] = await Promise.all([
+      bucket.createSignedUrl({ key: videoKey, expiration: ttlSeconds, method: 'GET' }),
+      bucket.createSignedUrl({ key: metaKey, expiration: ttlSeconds, method: 'GET' }),
+    ]);
+    const videoUrl = extractSignedUrl(videoSigned);
+    const metadataUrl = extractSignedUrl(metaSigned);
+    if (!videoUrl && !metadataUrl) return {};
+    return {
+      videoUrl,
+      metadataUrl,
+      ttlSeconds,
+      expiresAt: extractSignedExpiration(videoSigned) || extractSignedExpiration(metaSigned) || new Date(Date.now() + (ttlSeconds * 1000)).toISOString(),
+    };
+  } catch (err) {
+    console.error('Signed URL generation failed', err);
+    return {};
+  }
+}
+
+function extractSignedUrl(value) {
+  if (!value) return undefined;
+  if (typeof value === 'string') return value;
+  if (typeof value === 'object' && typeof value.url === 'string') return value.url;
+  return undefined;
+}
+
+function extractSignedExpiration(value) {
+  if (!value || typeof value !== 'object') return undefined;
+  const expiration = value.expiration || value.expiresAt || value.expires || value.expireAt;
+  if (!expiration) return undefined;
+  if (expiration instanceof Date) return expiration.toISOString();
+  if (typeof expiration === 'number' && Number.isFinite(expiration)) {
+    const ms = expiration > 1e12 ? expiration : expiration * 1000;
+    return new Date(ms).toISOString();
+  }
+  if (typeof expiration === 'string') {
+    const dt = new Date(expiration);
+    if (!Number.isNaN(dt.getTime())) return dt.toISOString();
+  }
+  return undefined;
+}
+
+function resolveSignedUrlTtl(value) {
+  const fallback = DEFAULT_SIGNED_TTL_SECONDS;
+  if (!value) return fallback;
+  const num = Number(value);
+  if (!Number.isFinite(num) || num < 300) return fallback;
+  const capped = Math.min(num, 7 * 24 * 60 * 60);
+  return Math.max(300, Math.floor(capped));
+}
+
+function parseRecipientList(value) {
+  if (!value) return [];
+  const entries = Array.isArray(value)
+    ? value
+    : String(value)
+        .split(/[,;\s]+/)
+        .map(v => v.trim());
+  const seen = new Set();
+  const out = [];
+  for (const entry of entries) {
+    if (!entry || !entry.includes('@')) continue;
+    const lower = entry.toLowerCase();
+    if (seen.has(lower)) continue;
+    seen.add(lower);
+    out.push(entry);
+  }
+  return out;
+}
+
+function formatExpiry(expiresAtIso, ttlSeconds) {
+  if (!expiresAtIso) return 'unknown';
+  try {
+    const date = new Date(expiresAtIso);
+    if (Number.isNaN(date.getTime())) return 'unknown';
+    const stamp = date.toISOString().replace('T', ' ').replace('Z', ' UTC');
+    if (!Number.isFinite(ttlSeconds)) return stamp;
+    const hours = (ttlSeconds / 3600);
+    const rounded = hours >= 10 ? Math.round(hours) : Number(hours.toFixed(1));
+    return `${stamp} (~${rounded} hours)`;
+  } catch {
+    return 'unknown';
+  }
 }

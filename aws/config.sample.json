@@ -2,5 +2,6 @@
   "REVIEWS_ENDPOINT": "https://<api-id>.execute-api.<region>.amazonaws.com/api/reviews",
   "PLACE_ID": "ChIJO8L3QtwU6YARnGKftpsMyfo",
   "GOOGLE_URL": "https://www.google.com/maps/search/?api=1&query_place_id=ChIJO8L3QtwU6YARnGKftpsMyfo",
-  "UPLOAD_ENDPOINT": "https://<api-id>.execute-api.<region>.amazonaws.com/api/upload"
+  "UPLOAD_ENDPOINT": "https://<api-id>.execute-api.<region>.amazonaws.com/api/upload",
+  "GA_MEASUREMENT_ID": ""
 }
